@@ -1,0 +1,40 @@
+﻿@model List<WebApp.Models.Sport>
+<ul>
+    @foreach(var item in Model)
+    { 
+        <li>
+            @if (User.IsInRole("Admin"))
+            {
+                @Html.ActionLink(item.Name, "Details", "Sport", new { id = item.Id }, new { })
+            }
+            else
+            {
+                <span class="cat-name">@item.Name</span>
+            }
+            <span class="act-cat"></span>
+            <ul class="level-2-cat">
+                <li>
+                    @if(item.IsTeamSport)
+                    {
+                        @Html.ActionLink("Команды","Index","Team", new{ sportId = item.Id }, new{})
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Игроки","Index","Player", new{ sportId = item.Id }, new{})
+                    }
+                </li>
+                <li>
+                    @Html.ActionLink("Турниры", "Index", "Tournament", new { sportId = item.Id }, new { })
+                </li>
+            </ul>
+        </li>
+      
+        
+    }
+    @if(User.IsInRole("Admin"))
+    {
+    <li>
+        @Html.ActionLink("Создать новый", "Create", "Sport", null, new { @class = "btn btn-primary" })
+    </li>
+    }
+</ul>

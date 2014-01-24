@@ -1,0 +1,33 @@
+﻿@model IEnumerable<WebApp.Models.Player>
+@using WebApp.Helpers
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Список игроков</h2>
+
+
+<table class="table">
+    <tr>
+        <th>Имя</th>
+        <th>Действия</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Подробно", "Details", new { id = item.Id }, new {@class = "btn btn-sm btn-info"})
+            @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+            {
+                @(" | ") @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }, new{@class = "btn btn-sm btn-default"})
+                @(" | ") @Html.PostActionButton("×", "Delete", "Player", new { id = item.Id }, new { @class = "delete-button" })
+            }
+        </td>
+    </tr>
+}
+
+</table>

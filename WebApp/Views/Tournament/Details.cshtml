@@ -1,0 +1,63 @@
+﻿@model WebApp.Models.Tournament
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="row">
+    <div class="col-xs-6">
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Sport.Name, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(x => x.Sport.Name)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(x => x.Name)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.StartDate, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(m => m.StartDate, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.EndDate, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(m => m.EndDate, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Place, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(m => m.Place, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(m => m.Description, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div><img src="@Model.ImageUrl" class="img-responsive"/></div>
+        <h3>Участники турнира</h3>
+        @Html.Action("TournamentParticipants", new{id = Model.Id, isEditable = User.IsInRole("Admin")})
+        @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+        {
+            @Html.ActionLink("Изменить состав участников", "EditParticipants", new { id = Model.Id }, new { @class = "btn btn-default" })
+        }
+    </div>
+</div>
+@if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+{
+    @Html.ActionLink("Редактировать", "Edit", "Tournament", new { id = Model.Id }, new { @class = "btn btn-primary" })
+}
+ @Html.ActionLink("Вернуться к турнирам", "Index", "Tournament", new { sportId = Model.SportId }, new { @class = "btn btn-default" })

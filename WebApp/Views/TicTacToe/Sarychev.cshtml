@@ -1,0 +1,159 @@
+﻿
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    @Scripts.Render("~/bundles/jquery")
+    <style type="text/css">
+        table {
+            padding: 3px;
+            border: 1px solid #000;
+            margin-top: 2%;
+        }
+
+            table td {
+                height: auto;
+                width: auto;
+                border: 1px solid #000;
+                margin-top: 20%;
+            }
+    </style>
+</head>
+<body style="background-color:#555;">
+    <div align="center" style="color: orange"><h1>Добро пожаловать в игру "Лайки-дизлайки"</div>
+
+    <div id="msg" align="center"> <h3> Текущий ход</div>
+    <div align="center"><img align="center" class="play" src="/Content/Sarychev/like.jpg"></div>
+    <div id="victory" align="center" style="color: #F11; font-weight : bold; display: none">WINNER!!!</div>
+    <div align="center" style="margin-top:1%"> <button id="refr" style="font-weight : bold; background-color: #099"><img class="refr" width="64" heigth="64" src="~/Content/Sarychev/refr2.jpg" alt="Зонтик" style="vertical-align: middle"> Play again?</button> </div>
+
+    <table align="center">
+        <tr id="2">
+            <td><img id="0" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="1" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="2" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+        </tr>
+        <tr id="1">
+            <td><img id="0" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="1" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="2" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+        </tr>
+        <tr id="0">
+            <td><img id="0" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="1" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+            <td><img id="2" src="~/Content/Sarychev/chayka.jpg" width="128" height="128"></td>
+        </tr>
+    </table>
+    <script type="text/javascript">
+
+        var t = 0;
+        var q = 0;
+        var gId = "";
+        var val = 1;
+        var value = 0;
+        var X = 0;
+        var Y = 0;
+
+
+        function init() {
+
+            $("img").attr("haveImg", "false");
+            for (var i = 0; i <= 2; i++) {
+                $("img[id=" + i + "]").attr("oX", i);
+            };
+            for (var i = 0; i <= 2; i++) {
+                $("tr[id=" + i + "]").find("img").attr("oY", i);
+            };
+            var test = "";
+
+        }
+        init();
+
+        $("#refr").click(function () {
+            $("#msg").css("display", "block");
+            $("#victory").css("display", "none");
+            $(".play").attr("src", "/Content/Sarychev/like.jpg");
+            $(this).css("display", "none");
+            init();
+            gId = "";
+            $(".play").attr("src", "/Content/Sarychev/like.jpg");
+            val = 1;
+
+        });
+
+        function get_state(n) {
+
+            $.get("/TicTacToe/GetState?gameId=" + n, function (result) {
+                console.log(result);
+                for (var i = 0; i < result.Turns.length; i++) {
+                    Value = result.Turns[i].Value;
+                    X = result.Turns[i].X;
+                    Y = result.Turns[i].Y;
+                    if (Value == 1) {
+                        $('[oX =' + X + ']').filter('[oY =' + Y + ']').attr("src", "/Content/Sarychev/like.jpg");
+                        val = 0;
+                        $(".play").attr("src", "/Content/Sarychev/dis.jpg");
+                    } else {
+                        $('[oX =' + X + ']').filter('[oY =' + Y + ']').attr("src", "/Content/Sarychev/dis.jpg");
+                        val = 1;
+                        $(".play").attr("src", "~/Content/Sarychev/like.jpg");
+                    }
+                }
+                setTimeout(function () {
+                    if (result.State == "O") {
+                        $("#msg").css("display", "none");
+                        $("#victory").css("display", "block");
+                        $("#refr").css("display", "block");
+                        $("img:not(.play, .refr)").attr("src", "/Content/Sarychev/chayka.jpg")
+                        $(".play").attr("src", "/Content/Sarychev/like.jpg");
+                        $("img").attr("haveImg", "true");
+                    }
+                    if (result.State == "X") {
+
+                        $("#msg").css("display", "none");
+                        $("#victory").css("display", "block");
+                        $("#refr").css("display", "block");
+                        $("img:not(.play, .refr)").attr("src", "/Content/Sarychev/chayka.jpg")
+                        $(".play").attr("src", "~/Content/Sarychev/dis.jpg");
+                        $("img").attr("haveImg", "true");
+                    }
+                    if (result.State == "Draw") {
+                        $("#msg").css("display", "none");
+                        $("#victory").css("display", "block");
+                        $("#victory").text("FRIEDSHIP WIN")
+                        $("#refr").css("display", "block");
+                        $(".play").attr("src", "/Content/Sarychev/ch.jpg");
+                        $("img").attr("haveImg", "true");
+                        $("img:not(.play, .refr)").attr("src", "/Content/Sarychev/chayka.jpg")
+                    }
+                }, 10)
+
+            });
+        };
+
+
+        $("img").click(function () {
+            if ($(this).attr("haveImg") == "false") {
+                t = $(this).attr("oX");
+                q = $(this).attr("oY")
+                $(this).attr("haveImg", "true")
+                $.post("/TicTacToe/MakeTurn",
+                 {
+                     gameId: gId,
+                     value: val,
+                     X: $(this).attr("oX"),
+                     Y: $(this).attr("oY")
+                 }, function (data) {
+                     console.log(data);
+                     gId = data;
+                     get_state(gId);
+                 });
+            }
+        });
+
+    </script>
+</body>
+</html>

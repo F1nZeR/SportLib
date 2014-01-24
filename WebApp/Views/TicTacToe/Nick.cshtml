@@ -1,0 +1,71 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "Nick";
+}
+<head>
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body>
+    <form method="post" action="/TicTacToe/MakeTurn">
+        <div>
+            <label for="x">X</label>
+            <input id="x" name="x" value="0"/>
+        </div>
+        <div>
+            <label for="y">Y</label>
+            <input id="y" name="y" value="0"/>
+        </div>
+        <div>
+            <label for="game">GameId</label>
+            <input id="game" name="gameId" />
+        </div>
+        <div>
+            <label for="value">Value</label>
+            <select id="value">
+                <option value="0">X</option>
+                <option value="1">O</option>
+            </select>
+        </div>
+        <input type="button" onclick="MakeTurn()" value="Сходить"/>
+    </form>
+    <textarea id="response">
+
+    </textarea>
+    <input type="button" onclick="GetState()" value="Получить состояние"/>
+    <script>
+        function GetState() {
+            $.ajax({
+                url: '/TicTacToe/GetState',
+                type: 'GET',
+                data:
+                    {
+                        'gameId': $("#game").val()
+                    },
+                success:
+                    function (result) {
+                        console.log(result);
+                        $("#response").val(JSON.stringify(result));
+                    }
+            })
+        }
+        function MakeTurn() {
+            $.ajax({
+                url: '/TicTacToe/MakeTurn',
+                type: 'POST',
+                data:
+                    {
+                        'gameId': $("#game").val(),
+                        'value': $("#value").val(),
+                        'x': $("#x").val(),
+                        'y': $("#y").val()
+                    },
+                success:
+                    function (result) {
+                        console.log(result);
+                        $("#game").val(result);
+                    }
+            })
+        }
+    </script>
+</body>

@@ -1,0 +1,20 @@
+﻿@model List<WebApp.Models.Game>
+<table class="zebra">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Турнир</th>
+            <th>Место</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach( var item in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.Date.ToShortDateString(), "Details", "Game", new { id = item.Id }, new{})</td>
+                <td>@item.Tournament.Name</td>
+                <td>@item.Place</td>
+            </tr>
+        }
+    </tbody>
+</table>

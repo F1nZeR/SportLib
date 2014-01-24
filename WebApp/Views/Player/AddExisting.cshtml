@@ -1,0 +1,25 @@
+﻿@model List<WebApp.Models.Player>
+
+@{
+    ViewBag.Title = "Добавление существующего игрока";
+}
+
+<h2>Добавление существующего игрока</h2>
+
+@using (Html.BeginForm("AddExisting", "Player", new{teamId = ViewBag.TeamId}, FormMethod.Post))
+{
+    @Html.DropDownList("PlayerId", new SelectList(Model, "Id", "Name", null))
+    <input class="btn btn-primary" type="submit" value="Добавить" />
+}
+
+@Html.Action("ShowFromTeam", "Player", new { teamId = ViewBag.TeamId })
+@Html.ActionLink("Назад", "Details", "Team", new { id = ViewBag.TeamId }, new {@class="btn btn-default"})
+
+@section scripts {
+    <script src="~/Scripts/select2.js"></script>
+    <script>
+        $("#PlayerId").select2({
+            placeholder: "Выберите игрока"
+        });
+    </script>
+}

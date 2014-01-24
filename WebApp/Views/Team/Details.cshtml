@@ -1,0 +1,73 @@
+﻿@model WebApp.Models.Team
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>Команда "@Model.Name"</h2>
+
+<div>
+    <hr />
+    <div class="form-group">
+        <div class="row gap">
+            <div class="col-xs-8">
+                <div class="row gap">
+                    <div class="col-xs-3">
+                        @Html.Label("Name", "Название команды")
+                    </div>
+                    <div class="col-xs-3">
+                        @Model.Name
+                        @Html.ValidationMessageFor(x => x.Name)
+                    </div>
+                </div>
+                <div class="row gap">
+                    <div class="col-xs-3">
+                        @Html.LabelFor(x => x.City)
+                    </div>
+                    <div class="col-xs-3">
+                        @Model.City
+                    </div>
+
+                </div>
+                <div class="row gap">
+                    <div class="col-xs-3">
+                        @Html.LabelFor(x => x.Description)
+                    </div>
+                    <div class="col-xs-3">
+                        @Model.Description
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <img src="@Model.ImageUrl" class="img-responsive" />
+            </div>
+        </div>
+        
+        @for (int i = 0; i < Model.Properties.Count; i++)
+        {
+            <div class="row gap">
+                <div class="col-xs-3">
+                    <label>@Model.Properties[i].TeamPropertyType.Name</label>
+                </div>
+                <div class="col-xs-3">
+                    @Model.Properties[i].Value
+                </div>
+            </div>
+        }
+    </div>
+    <p>
+        @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+        {
+            @Html.ActionLink("Добавить нового игрока", "Create", "Player", new { teamId = Model.Id }, new { @class = "btn btn-sm btn-primary" }) @(" ")
+            @Html.ActionLink("Добавить существующего игрока", "AddExisting", "Player", new { teamId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+        }
+    </p>
+    @Html.Action("ShowFromTeam", "Player", new { teamId = Model.Id })
+</div>
+<p>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+    }
+     @Html.ActionLink("К командам", "Index", new { sportId = Model.SportId }, new { @class = "btn btn-sm btn-default" })
+</p>

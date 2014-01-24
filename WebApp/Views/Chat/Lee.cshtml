@@ -1,0 +1,131 @@
+﻿@{Layout = null;}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style>
+        #chat_text {
+            overflow: auto;
+            border: 1px solid #999;
+            -webkit-border-radius: 5px 5px 5px 5px;
+            -moz-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+            padding: 3px;
+            background-color: #CCC;
+        }
+        hr {
+            border: none; 
+            background-color: red; 
+            color: red; 
+            height: 2px; 
+        }
+    </style>
+    @Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    var ctime;
+    $(document).ready(function () {
+        get_messages();
+        ctime = parseInt($('#time').val());
+        console.log(ctime);
+       runUpdate(ctime);
+       $('#chat_vvod').keyup(function (event) {
+            if (event.which == 13) {
+                send_message();
+                $('#chat_vvod').val('');
+            }
+        });
+
+        $('#but').click(function () {
+            send_message();
+            $('#chat_vvod').val('');
+        });
+        $('#numb').change(function () {
+            var numb = $('#numb').val();
+            if (numb > 0) {
+                if (numb > 150) {
+                    $('#numb').val('Кол-во записей <150');
+                }
+            }
+            else { $('#numb').val('введите число'); }
+        });
+        $('#time').change(function () {
+            var time = $('#time').val();
+            if (time > 0)
+            {
+                if (time < 2000)
+                {
+                    $('#time').val('Время>2-х секунд');
+                } else {
+                    ctime = time;
+                }
+            }
+            else { $('#time').val('введите число'); }
+        });
+   
+    
+        function runUpdate(delay) {
+            setTimeout(function () {
+                get_messages();
+                runUpdate(ctime);
+            }, delay);
+        }
+
+        function send_message()
+        {
+            var Message = $('#chat_vvod').val();
+            var Name = $('#name').val();
+            if (Message!="")
+            {
+                $.ajax(
+                {
+                    url: '/Chat/PostMessage',
+                    type: 'POST',
+                    data:
+                    {
+                        'name': Name,
+                        'message': Message
+                    },
+
+                   
+                });
+            }
+        }
+       
+        function get_messages()
+        {
+            var num = $('#numb').val();
+
+            $.ajax(
+            {
+                url: '/Chat/GetChatMessages?count=' + num,
+                type: 'GET',
+                dataType: 'json',
+                success: function (result)
+                {
+                    $('#chat_text').html("");
+                    for (var i=result.length-1; i>=0 ;i--)
+                    {
+                        $('#chat_text').append("<hr>"+"<p>"+"Имя: "+result[i].Name+" Сообщение: "+result[i].Message+"</p>"+"<hr>");
+                    }
+                }
+            } )
+            ;
+
+        }
+    })
+</script>
+ </head>
+<body>
+<div align="center">
+    <p>
+        Количество записей<input id="numb" name="numb" type="text" value="10" />
+        Время загрузки<input id="time" name="time" type="text"  value="4000"/>
+    </p>
+  <div id="chat_text" style=" height:400px; width:600px">
+  </div>
+  <p> Имя <input id="name" name="name" type="text" value="User">  </p>
+ 
+  <p> Текст <textarea id="chat_vvod" name="chat_vvod"/></textarea> </p>
+  <input id="but" name="but" type="button" style="" value="Ответить" />
+</div>
+</body>
+</html>

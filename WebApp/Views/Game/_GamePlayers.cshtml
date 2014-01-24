@@ -1,0 +1,52 @@
+﻿@model List<WebApp.Models.ViewModels.GamePlayerViewModel>
+
+<table class="table">
+    <tr>
+        <th>Имя</th>
+        @if (Model.Count > 0)
+        {
+            foreach (var prop in Model.First().GameParticipantPlayerProps)
+            {
+                <th>@prop.PlayerPropertyType.Name</th>
+            }
+        }
+        @if (ViewBag.Editable == true)
+        {
+            <th>Действия</th>
+        }
+    </tr>
+    @foreach (var player in Model)
+    {
+        <tr>
+            <td>
+                @if (!string.IsNullOrEmpty(player.ImageUrl))
+                {
+                    @:<img src="@player.ImageUrl" width="30" height="30" /> 
+                }
+                @Html.ActionLink(player.Name, "Details", "GameParticipant", new { id = player.Id }, null)
+            </td>
+            @foreach (var prop in player.GameParticipantPlayerProps)
+            {
+                <td>@prop.PropValue</td>
+            }
+            @if (ViewBag.Editable == true && (User.IsInRole("Admin") || User.IsInRole("Editor")))
+            {
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", "GameParticipant", new { id = player.Id }, new { @class = "btn btn-default btn-sm" })
+                    @if (ViewBag.IsDeleteEnabled == true)
+                    {
+                        @: |
+                        @Ajax.ActionLink("Удалить", "DeleteParticipant", "Game", new { id = player.Id },
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                UpdateTargetId = "gameParticip",
+                                InsertionMode = InsertionMode.Replace
+                            },
+                            new { @class = "btn btn-danger btn-sm" })
+                    }
+                </td>
+            }
+        </tr>
+    }
+</table>

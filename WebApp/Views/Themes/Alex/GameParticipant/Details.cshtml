@@ -1,0 +1,75 @@
+﻿@using WebApp.Models
+@model WebApp.Models.GameParticipantPlayer
+
+@{
+    ViewBag.Title = Model.Player.Name;
+    var props = Model.GameParticipantPlayerProps.ToList();
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="form-group">
+    <div class="row gap">
+        <div class="col-xs-3">
+            @Html.LabelFor(x => x.Player.Name)
+        </div>
+        <div class="col-xs-3">
+            @Model.Player.Name
+        </div>
+    </div>
+    <div class="row gap">
+        <div class="col-xs-3">
+            @Html.LabelFor(x => x.Player.BirthDate)
+        </div>
+        <div class="col-xs-3">
+            @Model.Player.BirthDate.ToShortDateString()
+        </div>
+    </div>
+    <div class="row gap">
+        <div class="col-xs-3">
+            @Html.LabelFor(x => x.Player.Nationality)
+        </div>
+        <div class="col-xs-3">
+            @Model.Player.Nationality
+        </div>
+    </div>
+    <div class="row gap">
+        <div class="col-xs-3">
+            @Html.LabelFor(x => x.Player.Biography)
+        </div>
+        <div class="col-xs-8">
+            @Model.Player.Biography
+        </div>
+    </div>
+    @foreach (var propFixed in Model.Player.Properties)
+    {
+        var prop = props.SingleOrDefault(x => x.PlayerPropertyTypeId == propFixed.PlayerPropertyTypeId);
+        if (prop != null)
+        {
+            <div class="row gap">
+                <div class="col-xs-3">
+                    @Html.Label(prop.PlayerPropertyType.Name)
+                </div>
+                <div class="col-xs-3">
+                    @Html.DisplayFor(m => prop.PropValue)
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row gap">
+                <div class="col-xs-3">
+                    @Html.Label(propFixed.PlayerPropertyType.Name)
+                </div>
+                <div class="col-xs-3">
+                    @Html.DisplayFor(m => propFixed.Value)
+                </div>
+            </div>
+        }
+    }
+</div>
+@Html.ActionLink("Текущее состояние игрока", "Details", "Player", new { id = Model.PlayerId }, new { @class = "btn btn-info" })
+@if (User.IsInRole("Admin"))
+{
+    @Html.ActionLink("Редактировать", "Edit", "GameParticipant", new { id = Model.Id }, new { @class = "btn btn-primary" })
+}
+@Html.ActionLink("Вернуться к игре", "Details", "Game", new { id = Model.GameParticipant.GameId }, new { @class = "btn btn-default" })

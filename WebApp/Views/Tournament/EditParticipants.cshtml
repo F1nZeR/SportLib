@@ -1,0 +1,27 @@
+﻿@model List<WebApp.Models.Participant>
+@{
+    ViewBag.Title = "Изменение списка участников турнира";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Ajax.BeginForm("AddParticipantToTournament", "Tournament", new { tournId = ViewBag.TournamentId },
+    new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tournParticips", InsertionMode = InsertionMode.Replace},
+    new { @class = "form-inline well" }))
+{
+    @Html.DropDownList("particId", new SelectList(Model, "Id", "Name", null))
+    <input type="submit" class="btn btn-sm btn-primary" value="Добавить" />
+}
+
+<div id="tournParticips">
+    @Html.Action("TournamentParticipants", new { id = ViewBag.TournamentId })
+</div>
+
+@Html.ActionLink("Вернуться к турниру", "Edit", "Tournament", new { id = ViewBag.TournamentId }, new { @class = "btn btn-default" })
+
+@section scripts {
+    <script src="~/Scripts/select2.js"></script>
+    <script>
+        $("#particId").select2();
+    </script>
+}

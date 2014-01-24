@@ -1,0 +1,56 @@
+* 									{ margin: 0; padding: 0; }
+a									{ text-decoration: none; }
+ul									{ list-style: none; }
+p                                   { margin: 15px 0; }
+
+/* 
+	LEVEL ONE
+*/
+ul.dropdown                         { position: relative; z-index: 999999999; 
+border-top:2px solid black;
+border-left:2px solid black;
+}
+ul.dropdown li{
+	width:19.68%;
+	float:left;
+  	text-align: center;
+	background: #282828;
+	padding-bottom: 9px;
+	padding-top: 7px;
+	border-right:2px solid black;
+	border-bottom:2px solid black;
+
+  }
+
+
+ul.dropdown li a                    { display: block; padding: 2px 8px;
+	 								  color: #FFF; }
+ul.dropdown li:last-child a         { border-right: none; } /* Doesn't work in IE */
+ul.dropdown li.hover,
+ul.dropdown li:hover                { background: url(../image/main_grad.jpg) repeat-x; color: black; position: relative; }
+
+
+
+/* 
+	LEVEL TWO
+*/
+ul.dropdown ul 						{ width: 100%; margin-left: -2px;  visibility: hidden; position: absolute; top: 100%; left: 0; border-top:2px solid black; border-left:2px solid black; }
+ul.dropdown ul li { 
+width:100%;
+font-weight: normal;
+font-size: 10px;
+background: #282828;
+color: #FFF;
+float: none;
+padding-bottom: 6px;
+padding-top: 4px;
+ }
+									  
+                                    /* IE 6 & 7 Needs Inline Block */
+ul.dropdown ul li a					{ border-right: none;  display: inline-block; } 
+
+/* 
+	LEVEL THREE
+*/
+ul.dropdown ul ul 					{ left: 100%; top: 0; }
+ul.dropdown li:hover > ul 			{ visibility: visible; }

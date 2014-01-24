@@ -1,0 +1,26 @@
+﻿@model WebApp.Models.Tournament
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<div id="content">
+
+    <div class="box">
+        <div class="blog">
+            <img src="/Content/themes/Alex/images/ft.jpg" align="left">
+            @Model.Description
+        </div>
+    </div>
+    @Html.Action("GameList", new { id = Model.Id })
+
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Редактировать", "Edit", "Tournament", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Изменить состав участников", "EditParticipants", new { id = Model.Id }, new { @class = "btn btn-default" })
+        @Html.ActionLink("Добавить игру", "Create", "Game", new { sportId = Model.SportId, tournId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+</div>

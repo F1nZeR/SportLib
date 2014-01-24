@@ -1,0 +1,8 @@
+﻿@model List<WebApp.Models.Sport>
+
+<div class="filters">
+    @foreach(var item in Model)
+    {
+        <a href="?id=@item.Id">@item.Name</a>
+    }
+</div>

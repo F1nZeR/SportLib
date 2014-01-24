@@ -1,0 +1,17 @@
+﻿@model List<WebApp.Models.Player>
+
+<ol>
+    @foreach (var partic in Model)
+    {
+        <li>
+            @Html.ActionLink(partic.Name, "Details", "Player", new { id = partic.Id }, null)
+            @if (ViewBag.IsEditable)
+            {
+                @Ajax.ActionLink("[Убрать]", "RemoveParticipantFromTournament", "Tournament",
+                new { tournId = ViewBag.TournamentId, particId = partic.Id },
+                 new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tournParticips", InsertionMode = InsertionMode.Replace })
+            }
+
+        </li>
+    }
+</ol>

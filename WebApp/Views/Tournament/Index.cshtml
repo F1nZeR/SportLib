@@ -1,0 +1,49 @@
+﻿@using WebApp.Helpers
+@model List<WebApp.Models.Tournament>
+
+@{
+    ViewBag.Title = "Турниры";
+}
+
+<h2>Турниры для @ViewBag.Sport.Name</h2>
+
+<table class="table">
+    <tr>
+        <th>Название</th>
+        <th>Действия</th>
+    </tr>
+    @foreach (var tourn in Model)
+    {
+        <tr>
+            <td>
+                @if (!tourn.IsFriendlyTournament)
+                {
+                    @Html.ActionLink(tourn.Name, "Details", new { id = tourn.Id })
+                }
+                else
+                {
+                    @tourn.Name
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Игры", "Index", "Game", new { sportId = tourn.SportId, tournId = tourn.Id }, new { @class = "btn btn-default btn-sm" })
+                @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+                {
+                    @(" | ")
+                    @Html.ActionLink("Выгрузить XML", "ExportTournament", "Offline", new { id = tourn.Id }, new { @class = "btn btn-default btn-sm" })
+                    if (!tourn.IsFriendlyTournament)
+                    {
+                        @(" | ") @Html.ActionLink("Редактировать", "Edit", "Tournament", new { id = tourn.Id }, new { @class = "btn btn-default btn-sm" })
+                        @(" | ") @Html.PostActionButton("Удалить", "Delete", "Tournament", new { id = tourn.Id }, new { @class = "btn btn-danger btn-sm" })
+                    }
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+{
+    @Html.ActionLink("Создать турнир", "Create", "Tournament", null, new { @class = "btn btn-primary" }) @(" ")
+    @Html.ActionLink("Импорт турнира", "ImportTournament", "Offline", null, new{@class = "btn btn-default"})   
+}

@@ -1,0 +1,83 @@
+﻿@using WebApp.Models
+@model Event
+@{
+    Sport sport = ViewBag.Sport;
+    List<SelectListItem> players = ViewBag.Players;
+    EventType eventType = ViewBag.EventType;
+}
+
+@using (Ajax.BeginForm("Create", "Event", null,
+    new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "eventEditor", InsertionMode = InsertionMode.Replace, OnComplete = "initValidation", OnBegin = "startLoading"},
+    new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(x => x.EventTypeId)
+    @Html.HiddenFor(x => x.GameId)
+    if (!eventType.IsSystemEventType)
+    {
+        <div class="form-group">
+            @Html.LabelFor(x => x.GameParticipantPlayerId, new { @class = "col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(x => x.GameParticipantPlayerId, players, new { style = "width:100%" })
+            </div>
+        </div>
+    }
+    
+    if (!eventType.IsSystemEventType)
+    {
+        if (eventType.IsSignifForProtocol)
+        {
+            <div class="form-group">
+                @Html.LabelFor(x => x.Comment, new { @class = "col-sm-3 control-label" })
+                <div class="col-sm-9">
+                    @Html.TextAreaFor(x => x.Comment, new { @class = "form-control" })
+                </div>
+            </div>
+
+            if (sport.TimePeriodCount > 1)
+            {
+                <div class="form-group">
+                    @Html.Label("TimePeriod", sport.TimePeriodName, new { @class = "col-sm-3 control-label" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(x => x.TimePeriod, new SelectList(Enumerable.Range(1, sport.TimePeriodCount)), new { @class = "form-control" })
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.Time, new { @class = "col-sm-3 control-label" })
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(x => x.Time, new Dictionary<string, object>()
+                    {
+                        {"data-val", "true"},
+                        {"data-val-required", "Не может быть пустым"},
+                        {"class", "form-control"},
+                        {"placeholder", "00:00:00"}
+                    })
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(x => x.Count, new { @class = "col-sm-3 control-label" })
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(x => x.Count, new { @class = "form-control" })
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="form-group">
+            @Html.LabelFor(x => x.Comment, new { @class = "col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextAreaFor(x => x.Comment, new { @class = "form-control" })
+            </div>
+        </div>
+    }
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Создать</button>
+        </div>
+    </div>
+}

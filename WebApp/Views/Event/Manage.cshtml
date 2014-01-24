@@ -1,0 +1,30 @@
+﻿@using WebApp.Helpers
+@model IEnumerable<WebApp.Models.ViewModels.EventViewModel>
+
+@{
+    ViewBag.Title = "Управление событиями";
+}
+
+<h2>Управление событиями</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Событие</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    @foreach (var ev in Model)
+    {
+        var player = ev.Player != null ? Html.ActionLink(ev.Player.Item2, "Details", "GameParticipant", new {id = ev.Player.Item1}, null) : new MvcHtmlString("без игрока");
+        <tr>
+            <td>@ev.Time: @ev.EventText - @player. @ev.Comment. [кол-во: @ev.Count]</td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", "Event", new{id = ev.Id}, new{@class = "btn btn-sm btn-primary"}) 
+                @Html.PostActionButton("Удалить", "Delete", "Event", new{id = ev.Id}, new{@class = "btn btn-sm btn-danger"})
+            </td>
+        </tr>
+    }
+</table>
+<div>
+    @Html.ActionLink("Вернуться к игре", "Details", "Game", new{id = ViewBag.GameId}, new{@class = "btn btn-default"})
+</div>

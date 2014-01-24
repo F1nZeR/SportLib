@@ -1,0 +1,23 @@
+﻿@model IEnumerable<WebApp.Models.Team>
+@using WebApp.Helpers
+
+@{
+    ViewBag.Title = "Список команд";
+}
+
+<h2>Список команд</h2>
+
+
+<div class="picture-container">
+    @foreach (var item in Model)
+    {
+        <div class="picture">
+            <a href="@Url.Action("Details", "Team", new { id = @item.Id })">
+                <img src="@(item.ImageUrl ?? "/Content/themes/Alex/images/team.jpg")" />
+                <div class="club">@item.Name</div>
+            </a>
+        </div>
+    }    
+</div>
+
+

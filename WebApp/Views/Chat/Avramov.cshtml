@@ -1,0 +1,139 @@
+﻿@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Чайтик</title>
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        jQuery(document).ready(function () {
+            var time_for_refresh = $('input:text[name="timeForRefresh"]').val();
+            var countMessages = $('input:text[name="countMessages"]').val();
+            refresh();
+            runRefresh(time_for_refresh);
+
+            $('input:text[name="timeForRefresh"]').change(function () {
+                if ($.isNumeric($('input:text[name="timeForRefresh"]').val())) {
+                    if ($('input:text[name="timeForRefresh"]').val() >= 2)
+                        time_for_refresh = $('input:text[name="timeForRefresh"]').val();
+                    else alert('Эй, сбавьте темп!');
+                }
+                refresh();
+            });
+
+            $('input:text[name="countMessages"]').change(function () {
+                if ($.isNumeric($('input:text[name="countMessages"]').val())) {
+                    if (($('input:text[name="countMessages"]').val() > 0) && ($('input:text[name="countMessages"]').val() < 150))
+                        countMessages = $('input:text[name="countMessages"]').val();
+                    else alert('Много будешь знать- быстро состаришься!');
+                }
+                refresh();
+            });
+
+            function refresh() {
+                $(function () {
+                    $.getJSON("/Chat/GetChatMessages?count=" + countMessages, function (json) {
+                        $('#messages').html('');
+                        json = json.reverse();
+                        $.each(json, function (index, itemData) {
+                            var date = new Date(parseInt(itemData.Date.substr(6)));
+                            var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+                            var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+                            var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+                            var messaga = '<div class="message" id="message-' + itemData.Id + '"><div class="time">' + hours + ':' + minutes + ':' + seconds + '</div> <div class="name">' + itemData.Name + '</div>: <div class="textmsg">' + itemData.Message + '</div></div>';
+                            $('#messages').append(messaga);
+                            var element = document.getElementById('messages');
+                            element.scrollTop = element.scrollHeight;
+                        });
+                    });
+                });
+            };
+
+            $('#send-button').click(function () {
+                var name = $('input:text[name="nick"]').val();
+                var message = $('input:text[name="text_message"]').val();
+                if ((name != "") && (message != "")) {
+                    $.post("/Chat/PostMessage", { name: name, message: message });
+                    $('input:text[name="text_message"]').val('');
+                    refresh();
+                } else {
+                    $('#warning').css('display', 'block');
+                    $('#warning').text("Имя пользователя и сообщение не должны быть пустыми!");
+                    $('#warning').fadeOut(6000);
+                }
+                var element = document.getElementById('messages');
+                element.scrollTop = element.scrollHeight;
+                return false;
+            })
+
+            function runRefresh(delay) {
+                setTimeout(function () {
+                    refresh();
+                    runRefresh(time_for_refresh * 1000);
+                }, delay);
+            }
+
+            $('#text_message').keypress(function (e) {
+                if (e.keyCode == 13) {
+                    $('#send-button').click();
+                    return false;
+                }
+            });
+        });
+
+    </script>
+    <style type="text/css">
+        #messages {
+            width: 550px;
+            margin: 20px auto;
+            padding: 10px;
+            height: 350px;
+            overflow: auto;
+            border-radius: 4px;
+            word-wrap: break-word;
+            border: 2px solid #CCCCCC;
+        }
+
+        .message {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #F4F4F4;
+        }
+
+        .time {
+            display: inline;
+            color: #0f0f0f;
+            padding: 3px;
+            border-radius: 4px;
+            background: #AAAAAA;
+        }
+
+        .name {
+            display: inline;
+            font-weight: bold;
+        }
+
+        .textmsg {
+            display: inline;
+        }
+
+        #input {
+            width: 550px;
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 4px;
+            background: #AAAAAA;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages"></div>
+    <div id="input">
+        Время обновления:<input type="text" name="timeForRefresh" value="4" /><br />
+        Количество сообщений:<input type="text" name="countMessages" value="15" /><br />
+        <input type="text" name="nick" value="Alex" /> <input type="text" id="text_message" name="text_message" value="" size="40" />
+        <button id="send-button">Отправить</button><span id="warning"></span>
+    </div>
+</body>
+</html>

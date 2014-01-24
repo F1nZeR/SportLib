@@ -1,0 +1,97 @@
+﻿@model WebApp.Models.ViewModels.ProtocolViewModel
+
+<table class="table table-bordered">
+    @if (Model.Sport.IsTeamSport)
+    {
+        <thead>
+            <tr>
+                <th></th>
+                <th class="text-center">Название</th>
+                @foreach (var eventType in Model.EventTypes)
+                {
+                    <th class="text-center">@eventType.Name</th>
+                }
+                <th class="text-center">Итоговый счёт</th>
+            </tr>
+        </thead>
+        foreach (var team in Model.Participants)
+        {
+            var players = team.GameParticipantPlayers.Select(x => x.Id);
+            <tr class="active">
+                <td class="text-center">
+                    @if (!string.IsNullOrEmpty(team.Participant.ImageUrl))
+                    {
+                        @:<img src="@team.Participant.ImageUrl" width="30" height="30" />
+                    }
+                </td>
+                <td class="text-center">
+                    @Html.ActionLink(team.Participant.Name, "Details", "Team", new { id = team.Participant.Id }, null)
+                </td>
+                @foreach (var eventType in Model.EventTypes)
+                {
+                    var curEvents = Model.Events.Where(x => x.EventTypeId == eventType.Id && (!x.GameParticipantPlayerId.HasValue || players.Contains(x.GameParticipantPlayerId.Value)));
+                    <td class="text-center">@curEvents.Sum(x => x.Count)</td>
+                }
+                @{ var teamEvents = Model.Events.Where(x => x.EventType.TotalChange > 0 && (!x.GameParticipantPlayerId.HasValue || players.Contains(x.GameParticipantPlayerId.Value))); }
+                <td class="text-center">@teamEvents.Select(x => x.Count * x.EventType.TotalChange).Sum()</td>
+            </tr>
+            foreach (var gameParticipantPlayer in team.GameParticipantPlayers)
+            {
+                <tr>
+                    <td class="text-center">
+                        @if (!string.IsNullOrEmpty(gameParticipantPlayer.Player.ImageUrl))
+                        {
+                            @:<img src="@gameParticipantPlayer.Player.ImageUrl" width="30" height="30" />
+                        }
+                    </td>
+                    <td class="text-center">
+                        @Html.ActionLink(gameParticipantPlayer.Player.Name, "Details", "GameParticipant", new { id = gameParticipantPlayer.Id }, null)
+                    </td>
+                    @foreach (var eventType in Model.EventTypes)
+                    {
+                        var curEvents = Model.Events.Where(x => x.EventTypeId == eventType.Id && x.GameParticipantPlayerId.HasValue && x.GameParticipantPlayerId == gameParticipantPlayer.Id);
+                        <td class="text-center">@curEvents.Sum(x => x.Count)</td>
+                    }
+                    @{ var playerEvents = Model.Events.Where(x => x.EventType.TotalChange > 0 && x.GameParticipantPlayerId.HasValue && x.GameParticipantPlayerId == gameParticipantPlayer.Id); }
+                    <td class="text-center">@playerEvents.Select(x => x.Count * x.EventType.TotalChange).Sum()</td>
+                </tr>
+            }
+        }
+    }
+    else
+    {
+        <thead>
+            <tr>
+                <th></th>
+                <th class="text-center">Имя</th>
+                @foreach (var eventType in Model.EventTypes)
+                {
+                    <th class="text-center">@eventType.Name</th>
+                }
+                <th class="text-center">Итоговый счёт</th>
+            </tr>
+        </thead>
+        foreach (var playerPartic in Model.Participants)
+        {
+            var player = playerPartic.GameParticipantPlayers.First().Id;
+            <tr class="active">
+                <td class="text-center">
+                    @if (!string.IsNullOrEmpty(playerPartic.Participant.ImageUrl))
+                    {
+                        @:<img src="@playerPartic.Participant.ImageUrl" width="30" height="30" />
+                    }
+                </td>
+                <td class="text-center">
+                    @Html.ActionLink(playerPartic.Participant.Name, "Details", "GameParticipant", new { id = player }, null)
+                </td>
+                @foreach (var eventType in Model.EventTypes)
+                {
+                    var curEvents = Model.Events.Where(x => x.EventTypeId == eventType.Id && (!x.GameParticipantPlayerId.HasValue || x.GameParticipantPlayerId.Value == player));
+                    <td class="text-center">@curEvents.Sum(x => x.Count)</td>
+                }
+                @{ var teamEvents = Model.Events.Where(x => x.EventType.TotalChange > 0 && (!x.GameParticipantPlayerId.HasValue || x.GameParticipantPlayerId.Value == player)); }
+                <td class="text-center">@teamEvents.Select(x => x.Count * x.EventType.TotalChange).Sum()</td>
+            </tr>
+        }
+    }
+</table>

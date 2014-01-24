@@ -1,0 +1,7 @@
+﻿@model IEnumerable<SelectListItem>
+    <label for="theme">Сменить тему:</label> @Html.DropDownList("theme", Model)
+    <script type="text/javascript">
+        document.getElementById("theme").onchange = function () {
+            window.location = this.options[this.selectedIndex].value;
+        }
+    </script>

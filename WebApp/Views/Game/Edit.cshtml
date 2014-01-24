@@ -1,0 +1,73 @@
+﻿@using WebApp.Models
+@model Game
+
+@{
+    ViewBag.Title = "Редактирование игры";
+}
+
+<h2>Редактирование игры</h2>
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Edit", "Game", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.ValidationSummary()
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.SportId)
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TournamentId, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Model.Tournament.Name
+                    @Html.HiddenFor(m => m.TournamentId)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Date, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.EditorFor(m => m.Date, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Place, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.EditorFor(m => m.Place, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.WinnerId, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.WinnerId, new SelectList(ViewBag.Participants, "Id", "Name", Model.WinnerId))
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn btn-default" value="Сохранить" />
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-6">
+        <h2>Участники</h2>
+        <div id="gameParticip">
+            @Html.Action("GetGameParticipants", new { id = Model.Id, ed = false})
+        </div>
+        @Html.ActionLink("Изменить участников", "EditParticipants", "Game", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    <script>
+        $('#Date').datepicker({
+            format: "dd.mm.yyyy"
+        });
+    </script>
+}

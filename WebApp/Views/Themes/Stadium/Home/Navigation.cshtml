@@ -1,0 +1,33 @@
+﻿@model List<WebApp.Models.Sport>
+
+<ul class="dropdown">
+    <li>
+        @Html.ActionLink("Главная", "Index", "Home")
+    </li>
+    <li>
+        <a href="#">Турниры</a>
+        <ul class="sub_menu">
+            @foreach(var item in Model)
+            {
+                <li>@Html.ActionLink(item.Name, "Index", "Tournament", new { sportId = item.Id }, new { })</li>
+            }
+        </ul>
+    </li>
+    <li>
+        <a href="#">Команды</a>
+        <ul class="sub_menu">
+            @foreach (var item in Model)
+            {
+                <li>@Html.ActionLink(item.Name, "Index", item.IsTeamSport ? "Team" : "Player", new { sportId = item.Id }, new { })</li>
+            }
+        </ul>
+    </li>
+    <li>
+        @Html.ActionLink("Статистика", "Index", "Statistic")
+    </li>
+    <li>
+        @Html.ActionLink("О сайте", "About", "Home")
+    </li>
+
+
+</ul>

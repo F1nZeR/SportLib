@@ -1,0 +1,27 @@
+﻿@using WebApp.Helpers
+@using WebApp.Models.Statistic
+@model SelectList
+@{
+    StatTargetType type = ViewBag.StatType;
+    List<StatTargetType> contextTypes = ViewBag.ContextTypes;
+}
+
+<p>
+    @Html.Hidden("StatType", type)
+    @type.Description(): @Html.DropDownList("StatElements", Model, new Dictionary<string, object>
+                     {
+                         { "data-placeholder", @type.Description()},
+                         { "multiple", ""}
+                     })
+</p>
+
+<p>
+    Контекст:
+    @foreach (var context in contextTypes)
+    {
+        <a href="#" data-context="@context" class="btn btn-sm btn-default">@context.Description()</a>
+    }
+</p>
+
+<p id="contextEditor">
+</p>

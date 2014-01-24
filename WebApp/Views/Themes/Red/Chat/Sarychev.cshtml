@@ -1,0 +1,151 @@
+﻿@{Layout = null;}
+<html>
+    <head>
+        @Scripts.Render("~/bundles/jquery")
+        <style type="text/css">
+            #something {
+                width: 200px;
+                height: 200px;
+                background-color: red;
+                color: white;
+                border: 4px solid black;
+                margin: 100px 0 0 80px;
+            }
+
+            #chat_text_field {
+                margin: 10% 25% 0 25%;
+                overflow: auto;
+                border: 1px solid #999;
+                -webkit-border-radius: 5px 5px 5px 5px;
+                -moz-border-radius: 5px 5px 5px 5px;
+                border-radius: 5px 5px 5px 5px;
+                padding: 3px;
+                background-color: #CCC;
+                width: 50%;
+            }
+
+            #box {
+                padding: 3px;
+                border: 1px solid #999;
+                background-color: #AfA;
+            }
+
+            #tbl {
+                margin: 0% 21% 0 21%;
+            }
+
+            #send {
+                margin: 0% 22% 0 48%;
+                width: 5%;
+            }
+        </style>
+    </head>
+<body style="background-color:#9bb;">
+
+    <div display="inline" style="margin:10% 21% 0 25%;">
+        <div style="float: left;">Count of messages </div>
+        <div><input id="count" type="text" value="20" style="float: left; background-color:#AAEEE6; width:10%"></input></div>
+        <div style="float: left;">Latency</div>
+        <div><input id="lat" type="text" value="2000" style="float: left; background-color:#AAFFE6; width:30%;"></input></div>
+
+    </div>
+    <div id="chat_text_field" style="height:400px;"></div>
+
+
+    <table id="tbl">
+
+
+        </tr>
+        <tr>
+            <td align="right">Nick</td>
+            <td><input id="nick" type="text" value="imfirst" style="float: left; background-color:#AAFFE6;" name="name">  </td>
+            <td><div id="alarm_nick" style="display:none; color: red" /> <-set your nickname pls!</div></td>
+        </tr>
+        <tr>
+            <td align="right">Message</td>
+            <td><textarea id="msg" name="message" style="float: left; width:200%; height:100%; background-color:#BAFFE6;" /></textarea> </td>
+            <td><div id="alarm_msg" style="display:none; color: red; margin-left:200px"> <- write the message right now!</div></td>
+    </table>
+    <button id="send">Send</button>
+
+    <script type="text/javascript">
+
+        var latency = lat.value;
+        var delay = latency;
+        $("#lat").change(function () {
+            var lat = parseInt($("#lat").val());
+            if (lat > 2000) {
+                latency = lat;
+            } else {
+                alert("xyi");
+            }
+            console.log(latency);
+        });
+
+        var countMes = count.value;
+        $("#count").change(function () {
+            countMes = $("#count").val();
+            console.log(countMes);
+
+        });
+
+        $(document).ready(function startUpdate(delay) {
+            setTimeout(function get_messages() {
+                $.get("/Chat/GetChatMessages?count=" + countMes, function (data) {
+                    $("#chat_text_field").text("");
+                    console.log("go");
+                    for (var i = data.length - 1; i >= 0; i--) {
+
+                        var thedate = Date(/1224043200000/);
+
+                        var dat = new Date(parseInt(data[i].Date.substr(6)));
+                        var formatted = dat.getFullYear() + "-" +
+                          ("0" + (dat.getMonth() + 1)).slice(-2) + "-" +
+                          ("0" + dat.getDate()).slice(-2) + " " + dat.getHours() + ":" +
+                          dat.getMinutes() + ":" + dat.getSeconds();
+
+                        $("#chat_text_field").append("<div id ='box' display: 'inline'>" + "<div style='width : 20%;'>" + formatted + "</div>" + " " + "<span style='color:blue;'>" + data[i].Name + "</span>" + ": " + data[i].Message + "</div>" + "<br />");
+
+                        var elem = document.getElementById('chat_text_field'); elem.scrollTop = elem.scrollHeight;
+
+                    };
+
+                });
+                startUpdate(latency);
+            }, delay);
+        });
+
+
+
+
+        $("#send").click(function () {
+            var _name = $("#nick").val();
+            var _msg = $("#msg").val();
+            if (_name.length == 0 || _msg.length == 0) {
+                if (_name.length == 0) {
+                    $("#alarm_nick").css("display", "block")
+                } else {
+                    $("#alarm_nick").css("display", "none")
+                }
+                if (_msg.length == 0) {
+                    $("#alarm_msg").css("display", "block")
+                } else {
+                    $("#alarm_msg").css("display", "none")
+                }
+            } else {
+                $.post("/Chat/PostMessage", { name: _name, message: _msg });
+                $("#msg").val('');
+
+            }
+        });
+        $("#msg").keypress(function (e) {
+            if (e.keyCode == 13) {
+                $("#send").click();
+                event.preventDefault();
+            }
+
+        });
+
+    </script>
+</body>
+</html>

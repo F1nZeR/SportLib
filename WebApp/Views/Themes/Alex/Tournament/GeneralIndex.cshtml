@@ -1,0 +1,15 @@
+﻿@model List<WebApp.Models.Sport>
+@{
+    ViewBag.Title = "Турниры";
+}
+<h2>Список турниров по видам спорта</h2>
+<div class="box">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>
+                @Html.ActionLink(item.Name, "Index", "Tournament", new { sportId = item.Id }, new { })
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<WebApp.Models.ViewModels.EventViewModel>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Лог игры</div>
+    <div class="panel-body" id="gameLog" style="height:400px; overflow-y: scroll;">
+        @foreach (var ev in Model)
+        {
+            @Html.Partial("_SingleEvent", ev)
+        }
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model WebApp.Models.Sport
+
+@{
+    ViewBag.Title = "Создание вида спорта";
+}
+
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm("Create", "Sport", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+{
+    @Html.ValidationSummary()
+    @Html.EditorForModel()
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Создать вид спорта" />
+        </div>
+    </div>
+}
+
+@section scripts
+{
+    <script>
+        $(function () {
+            toggleIsTeamSport($("#IsTeamSport").prop("checked"));
+
+            $("#IsTeamSport").click(function () {
+                toggleIsTeamSport($(this).prop("checked"));
+            });
+        });
+
+        function toggleIsTeamSport(isChecked) {
+            $("#TeamSizeMin").attr("disabled", !isChecked);
+            $("#TeamSizeMax").attr("disabled", !isChecked);
+        }
+    </script>
+}

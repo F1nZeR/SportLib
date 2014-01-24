@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "Kostya";
+}
+
+<h1>Чайка-СОФТ представляет Вашему вниманию чайтик вашей мечты!</h1>
+<div class="panel panel-default">
+    <div class="panel-heading">Чайтик</div>
+    <div class="panel-body" id="chat" style="height:400px; overflow-y: scroll;"></div>
+</div>
+<div class="container">
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="name" class="sr-only">Ваше имя</label>
+            <input class="form-control" type="text" id="name" value="Kostya" />
+            <span class="help-block">Ваше имя</span>
+        </div>
+        <div class="form-group">
+            <label for="msgCount" class="sr-only">Количество сообщений</label>
+            <input class="form-control" type="text" id="msgCount" value="20" />
+            <span class="help-block">Количество сообщений</span>
+        </div>
+        <div class="form-group">
+            <label for="updateRate" class="sr-only">Частота обновления (мс)</label>
+            <input class="form-control" type="text" id="updateRate" value="3000" />
+            <span class="help-block">Частота обновления (мс)</span>
+        </div>
+    </form>
+    <form class="form-inline" id="chatForm" role="form" id="chatForm">
+        <div class="form-group">
+            <textarea class="form-control" cols=50 rows=1 id="msg" placeholder="Введите Ваше сообщение..."></textarea>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-default" type="submit" />
+        </div>
+    </form>
+</div>
+
+@section scripts
+{
+    <script>
+        var curDelay = 3000;
+        var msgCount = 20;
+        $(document).ready(function () {
+            getMessages(msgCount);
+            startLoop();
+
+            $("#chatForm").submit(function (event) {
+                event.preventDefault();
+                var name = $("#name").val();
+                var msg = $("#msg").val();
+                if (name && msg) {
+                    postMessage(name, msg);
+                }
+                $("#msg").val("");
+                return false;
+            });
+
+            $("#msg, #name").keyup(function(event) {
+                if ($(this).val()) {
+                    $(this).parent().removeClass("has-error");
+                } else {
+                    if ($(this).parent().hasClass("has-error") == false)
+                        $(this).parent().addClass("has-error");
+                }
+            });
+
+            $("#msgCount, #updateRate").change(function (event) {
+                var value = parseInt($(this).val()) || 0;
+                var isValid = value > 0;
+                if (isValid) {
+                    if ($(this).attr("id") === "msgCount") {
+                        isValid = value <= 150;
+                        if (isValid) msgCount = value;
+                    } else {
+                        isValid = value >= 2000;
+                        if (isValid) curDelay = value;
+                    }
+                }
+                if (!isValid) {
+                    if ($(this).parent().hasClass("has-error") == false)
+                        $(this).parent().addClass("has-error");
+                } else {
+                    $(this).parent().removeClass("has-error");
+                }
+            });
+        });
+
+        $("#msg").keydown(function (event) {
+            if (event.keyCode == 13 && jQuery.support.submitBubbles) {
+                event.preventDefault();
+                $(this).parents("form").submit();
+            };
+        });
+
+        function postMessage(name, message) {
+            $.post("/Chat/PostMessage", { name: name, message: message });
+            addMsgToChat($.now(), name, message);
+        }
+
+        function startLoop() {
+            setTimeout(function () {
+                getMessages(msgCount);
+                startLoop();
+            }, curDelay);
+        }
+
+        function getMessages(count) {
+            $.get("/Chat/GetChatMessages?count=" + count, function (data) {
+                $("#chat").html("");
+                for (var i = data.length - 1; i >= 0; i--) {
+                    addMsgToChat(data[i].Date, data[i].Name, data[i].Message);
+                }
+            });
+        }
+
+        function addMsgToChat(date, name, msg) {
+            var cdate = parseInt(date) > 0 ? new Date(parseInt(date)) : new Date(parseInt(date.substr(6)));
+            var hours = cdate.getHours() < 10 ? '0' + cdate.getHours() : cdate.getHours();
+            var mins = cdate.getMinutes() < 10 ? '0' + cdate.getMinutes() : cdate.getMinutes();
+            var secs = cdate.getSeconds() < 10 ? '0' + cdate.getSeconds() : cdate.getSeconds();
+            var displayDate = hours + ':' + mins + ':' + secs;
+            $("#chat").append("<pre><span class='label label-primary'>" + displayDate + "</span> <b>" + name + "</b>: " + msg + "</pre>");
+            var elem = document.getElementById('chat');
+            elem.scrollTop = elem.scrollHeight;
+        }
+    </script>
+}

@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Главная";
+}
+
+<div class="jumbotron">
+    <h1>Чайка-СОФТ</h1>
+    <p class="lead">Здесь творится история</p>
+    <p><a href="http://www.nyan.cat/" class="btn btn-primary btn-large">Няшиться &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Чайтики</h2>
+        <p>
+            Чайтики наших фронтендеров
+        </p>
+        <p><a class="btn btn-default" href="@Url.Action("Index", "Chat")">Посмотреть &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Крестики-нолики</h2>
+        <p>
+            Крестики-нолики наших фронтендеров
+        </p>
+        <p><a class="btn btn-default" href="@Url.Action("Index", "TicTacToe")">Посмотреть &raquo;</a></p>
+    </div>
+</div>

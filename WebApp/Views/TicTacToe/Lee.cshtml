@@ -1,0 +1,246 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Крестики-нолики))</title>
+    <style>
+        body {
+            background-color: #FF3;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        var test = new Array(9);
+        var f = 2;
+        var id;
+        for (i = 0; i < 9; i++) test[i] = 0;
+        x = new Image(64, 64);
+        x.src = "/Content/Lee/kr.png";
+        o = new Image(64, 64);
+        o.src = "/Content/Lee/zero.png";
+        bloc = new Image(64, 64);
+        bloc.src = "/Content/Lee/bloc.jpg";
+        function Game() {
+            f = 2;
+            for (i = 0; i < 9; i++) test[i] = 0;
+            document.pole0.src = bloc.src;
+            document.pole1.src = bloc.src;
+            document.pole2.src = bloc.src;
+            document.pole3.src = bloc.src;
+            document.pole4.src = bloc.src;
+            document.pole5.src = bloc.src;
+            document.pole6.src = bloc.src;
+            document.pole7.src = bloc.src;
+            document.pole8.src = bloc.src;
+
+        }
+
+        function get_stat() {
+
+
+
+            $.ajax(
+            {
+                url: '/TicTacToe/GetState?gameId=' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function (result) {
+                    {
+                        str = (result.State);
+                        if (str == 'Draw') { alert("Ничья"); }
+                        if (str == 'X') { alert("Победа крестиков"); }
+                        if (str == 'O') { alert("Победа ноликов"); }
+                    }
+                }
+            })
+            ;
+
+        }
+
+        function send_x(value) {
+            var x = 0; var y = 0;
+            if (value == 0) { x = 0; y = 0; }
+            if (value == 1) { x = 0; y = 1; }
+            if (value == 2) { x = 0; y = 2; }
+            if (value == 3) { x = 1; y = 0; }
+            if (value == 4) { x = 1; y = 1; }
+            if (value == 5) { x = 1; y = 2; }
+            if (value == 6) { x = 2; y = 0; }
+            if (value == 7) { x = 2; y = 1; }
+            if (value == 8) { x = 2; y = 2; }
+
+            $.ajax(
+            {
+                url: '/TicTacToe/MakeTurn',
+                type: 'POST',
+                data:
+                {
+                    'gameId': id,
+                    'value': 0,
+                    'X': x,
+                    'Y': y
+                },
+
+                success: function (result) {
+                    {
+                        str = (result.State);
+                        if (str == 'Draw') { alert("Ничья"); }
+                        if (str == 'X') { alert("Победа крестиков"); }
+                        if (str == 'O') { alert("Победа ноликов"); }
+                    }
+                }
+            });
+
+        }
+        function send_o(value) {
+            var x = 0; var y = 0;
+            if (value == 0) { x = 0; y = 0; }
+            if (value == 1) { x = 0; y = 1; }
+            if (value == 2) { x = 0; y = 2; }
+            if (value == 3) { x = 1; y = 0; }
+            if (value == 4) { x = 1; y = 1; }
+            if (value == 5) { x = 1; y = 2; }
+            if (value == 6) { x = 2; y = 0; }
+            if (value == 7) { x = 2; y = 1; }
+            if (value == 8) { x = 2; y = 2; }
+
+            $.ajax(
+            {
+                url: '/TicTacToe/MakeTurn',
+                type: 'POST',
+                data:
+                {
+                    'gameId': id,
+                    'value': 1,
+                    'X': x,
+                    'Y': y
+                },
+
+
+            });
+
+        }
+        function send_first(value) {
+            var x = 0; var y = 0;
+            if (value == 0) { x = 0; y = 0; }
+            if (value == 1) { x = 0; y = 1; }
+            if (value == 2) { x = 0; y = 2; }
+            if (value == 3) { x = 1; y = 0; }
+            if (value == 4) { x = 1; y = 1; }
+            if (value == 5) { x = 1; y = 2; }
+            if (value == 6) { x = 2; y = 0; }
+            if (value == 7) { x = 2; y = 1; }
+            if (value == 8) { x = 2; y = 2; }
+
+            $.ajax(
+            {
+                url: '/TicTacToe/MakeTurn',
+                type: 'POST',
+                data:
+                {
+                    'gameId': '',
+                    'value': 0,
+                    'X': x,
+                    'Y': y
+                },
+                success: function (result) { id = (result); }
+
+
+            });
+
+        }
+        function Cross(value) {
+            if (value == 0) document.pole0.src = x.src;
+            if (value == 1) document.pole1.src = x.src;
+            if (value == 2) document.pole2.src = x.src;
+            if (value == 3) document.pole3.src = x.src;
+            if (value == 4) document.pole4.src = x.src;
+            if (value == 5) document.pole5.src = x.src;
+            if (value == 6) document.pole6.src = x.src;
+            if (value == 7) document.pole7.src = x.src;
+            if (value == 8) document.pole8.src = x.src;
+        }
+
+        function Zero(value) {
+            if (value == 0) document.pole0.src = o.src;
+            if (value == 1) document.pole1.src = o.src;
+            if (value == 2) document.pole2.src = o.src;
+            if (value == 3) document.pole3.src = o.src;
+            if (value == 4) document.pole4.src = o.src;
+            if (value == 5) document.pole5.src = o.src;
+            if (value == 6) document.pole6.src = o.src;
+            if (value == 7) document.pole7.src = o.src;
+            if (value == 8) document.pole8.src = o.src;
+        }
+
+        function Place(value) {
+            if (test[value] == 0) {
+
+                if (f == 2) {
+                    Cross(value);
+
+                    send_first(value);
+
+                    f = 0;
+                }
+                else if (f == 1) {
+                    Cross(value);
+
+                    send_x(value);
+                    get_stat();
+                    f = 0;
+                }
+
+                else if (f == 0) {
+                    Zero(value);
+
+                    send_o(value);
+                    get_stat();
+                    f = 1;
+                }
+
+                test[value] = 1;
+            }
+            else { alert("Нельзя так делать"); }
+
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <h2 align="center">
+        <font color="#000000">Крестики-нолики:)</font><br>
+        <br>
+    </h2>
+    <div align="center">
+        <center>
+            <input id="but" name="but" type="button" value="Новая игра" onclick="Game()" /> </br> </br>
+            <table>
+                <tr>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole0" onclick="Place(0)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole1" onclick="Place(1)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole2" onclick="Place(2)" width="64" height="64"></td>
+                </tr>
+                <tr>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole3" onclick="Place(3)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole4" onclick="Place(4)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole5" onclick="Place(5)" width="64" height="64"></td>
+                </tr>
+                <tr>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole6" onclick="Place(6)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole7" onclick="Place(7)" width="64" height="64"></td>
+                    <td align="center"><img src="~/Content/Lee/bloc.jpg" name="pole8" onclick="Place(8)" width="64" height="64"></td>
+                </tr>
+            </table>
+        </center>
+    </div>
+</body>
+</html>
+

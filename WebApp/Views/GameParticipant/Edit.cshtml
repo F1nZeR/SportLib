@@ -1,0 +1,38 @@
+﻿@model WebApp.Models.ViewModels.GameParticipantPlayerEditModel
+
+@{
+    ViewBag.Title = "Редактирование участника игры";
+}
+
+<h2>Редактирование участника</h2>
+
+@using (Html.BeginForm("Edit", "GameParticipant", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.PlayerName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(m => m.PlayerName, new { @class = "form-control" })
+        </div>
+    </div>
+
+    for (int i = 0; i < Model.GameParticipantPlayerProps.Count; i++)
+    {
+        @Html.HiddenFor(x => Model.GameParticipantPlayerProps[i].Id)
+        @Html.HiddenFor(x => Model.GameParticipantPlayerProps[i].PlayerPropertyTypeId)
+        @Html.HiddenFor(x => Model.GameParticipantPlayerProps[i].GameParticipantPlayerId)
+        <div class="form-group">
+            @Html.Label(Model.GameParticipantPlayerProps[i].PlayerPropertyType.Name, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => Model.GameParticipantPlayerProps[i].PropValue, new { @class = "form-control" })
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Сохранить" />
+        </div>
+    </div>
+}

@@ -1,0 +1,22 @@
+﻿@using WebApp.Helpers
+@model WebApp.Models.PlayerPropertyType
+
+@Html.HiddenFor(x => x.SportId)
+<div class="form-group">
+    @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.Type, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.DropDownListFor(m => m.Type, Model.Type.ToSelectList(), new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.IsDependsOnGame, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.IsDependsOnGame, new { @class = "form-control" })
+    </div>
+</div>

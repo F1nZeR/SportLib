@@ -1,0 +1,146 @@
+﻿@using WebApp.Helpers
+@model WebApp.Models.ViewModels.GamePreviewViewModel
+
+@{
+    ViewBag.Title = "Игра: " + Model.DisplayName;
+}
+
+<h2>Игра: @Html.Raw(Model.RawDisplayName)</h2>
+
+<table class="table">
+    <tr>
+        <th>@Html.LabelFor(m => m.Game.TournamentId)</th>
+        <th>@Html.LabelFor(m => m.Game.Date)</th>
+        <th>@Html.LabelFor(m => m.Game.Place)</th>
+        <th>@Html.LabelFor(m => m.Game.Description)</th>
+        @if (Model.Game.WinnerId.HasValue)
+        {
+            <th>@Html.LabelFor(m => m.Game.WinnerId)</th>
+        }
+    </tr>
+    <tr>
+        <td>@Model.Game.Tournament.Name</td>
+        <td>@Model.Game.Date.ToLongDateString()</td>
+        <td>@Model.Game.Place</td>
+        <td>@Model.Game.Description</td>
+        @if (Model.Game.WinnerId.HasValue)
+        {
+            <th>@Model.Game.Winner.Name</th>
+        }
+    </tr>
+</table>
+
+<div>
+    <h3 class="text-center">Соперники</h3>
+    <hr />
+    @Html.Action("GetGameParticipants", new { id = Model.Id, ed = false })
+</div>
+
+<div>
+    <h3 class="text-center">Протокол игры</h3>
+    <hr />
+    <div id="gameProtocol">
+        @Html.Action("GetProtocol", "Event", new { gameId = Model.Id })
+    </div>
+</div>
+
+<div class="row well">
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        <div class="col-xs-7">
+            @Html.Action("GetGameLog", "Event", new { gameId = Model.Id })
+        </div>
+        <div class="col-xs-5">
+            @{ var eventTypes = new SelectList(Model.Game.Sport.EventTypes, "Id", "Name", null); }
+            <h3>Создание события</h3>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="eventType" class="col-sm-3 control-label">Тип</label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("eventType", eventTypes, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div id="eventEditor">
+                @Html.Action("GetEventEditor", "Event", new { eventTypeId = eventTypes.First().Value, gameId = Model.Id })
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-xs-12">
+            @Html.Action("GetGameLog", "Event", new { gameId = Model.Id })
+        </div>
+    }
+</div>
+
+<div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        @Html.ActionLink("Редактировать", "Edit", "Game", new { id = Model.Id }, new { @class = "btn btn-primary" }) @(" ")
+        @Html.ActionLink("Управление событиями", "Manage", "Event", new { gameId = Model.Id }, new { @class = "btn btn-primary" }) @(" ")
+        @Html.PostActionButton("Удалить", "Delete", "Game", new { id = Model.Id }, new { @class = "btn btn-danger" }) 
+    }
+    @Html.ActionLink("Вернуться к играм турнира", "Index", "Game", new { sportId = Model.Game.SportId, tournId = Model.Game.TournamentId }, new { @class = "btn btn-default" })
+</div>
+
+@section scripts {
+    <script src="~/Scripts/select2.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.0.1.js"></script>
+    <script src="~/Scripts/spin.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $("#eventType").change(function() {
+            var val = $(this).val();
+            startLoading();
+            $.get("@Url.Action("GetEventEditor", "Event")", { eventTypeId: val, gameId: @Model.Id }, function(data) {
+                $("#eventEditor").html(data);
+                initValidation();
+                $("#GameParticipantPlayerId").select2();
+            });
+        });
+
+        function initValidation() {
+            $.validator.unobtrusive.parse($("#eventEditor"));
+            $("#GameParticipantPlayerId").select2();
+            spinner.stop();
+        }
+
+        $("#GameParticipantPlayerId").select2();
+
+        var target = document.getElementById("eventEditor");
+        var spinner = new Spinner({
+            length: 20,
+            width: 10,
+            radius: 30
+        });
+
+        function startLoading() {
+            spinner.spin(target);
+        }
+
+        // signalR
+        $(function() {
+            $.connection.hub.start();
+            $.connection.hub.logging = true;
+            var gameLog = $.connection.gameLogHub;
+
+            gameLog.client.showEvent = function(ev) {
+                var gLog = $("#gameLog");
+                gLog.prepend(ev);
+                var elem = gLog.find("pre").eq(0);
+                elem.css("opacity", '0');
+                elem.animate({ opacity: '1' }, 500);
+            };
+
+            gameLog.client.showProtocol = function(protocol) {
+                $("#gameProtocol").html(protocol);
+            };
+
+            gameLog.client.updateSingleLog = function(id, html) {
+                var log = $("#gameLog").find("[data-id='" + id + "']");
+                log.replaceWith(html);
+            };
+        });
+    </script>
+}

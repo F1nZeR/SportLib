@@ -1,0 +1,167 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>XO</title>
+    @Scripts.Render("~/bundles/jquery")
+    <style type="text/css">
+        #restart {
+            width: 100px;
+            margin: 0px auto;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #game_result {
+            text-align: center;
+            padding: 5px;
+        }
+
+        .center {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .gamefield {
+            overflow: hidden;
+            width: 180px;
+            margin: 10px auto;
+            padding: 10px;
+            height: 190px;
+            background-color: #000;
+        }
+
+        .line {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+            .line div {
+                display: inline-block;
+                overflow: hidden;
+                width: 60px;
+                height: 60px;
+                background-color: #FFF;
+            }
+
+        .o {
+            background-image: url(/Content/Krakovetsky/o.png);
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .x {
+            background-image: url(/Content/Krakovetsky/x.png);
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+
+            var gameId = '';
+            var state = '';
+            var turns = '';
+            var who = 0;
+            var xo = ["x", "o"];
+
+
+            $('.gamefield').click(function (event) {
+
+                var but_id = event.target.id;
+
+                var x = but_id[5];
+                var y = but_id[6];
+
+                if ((typeof x != "undefined") && (typeof y != "undefined")) {
+
+                    $('#field' + x + y).append('<div class="' + xo[who] + '"></div>');
+
+
+                    $.post("/TicTacToe/MakeTurn",
+					{
+					    gameId: gameId,
+					    value: who,
+					    x: x,
+					    y: y
+					})
+					.done(function (data) {
+
+					    if (gameId == '') gameId = data;
+
+					    $.getJSON("/TicTacToe/GetState?gameId=" + gameId,
+
+                        function (json) {
+
+                            state = json.State;
+
+                            switch (state) {
+                                case 'Draw':
+                                    $('#game_result').html("Draw");
+                                    $('#turn').html('')
+                                    break
+
+                                case 'X':
+                                    $('#game_result').html("X`s victory");
+                                    $('#turn').html('');
+                                    break
+
+                                case 'O':
+                                    $('#game_result').html("O`s vicrtory");
+                                    $('#turn').html('');
+                                    break
+                            }
+                        });
+					});
+                    (who) ? who = 0 : who = 1;
+                    $('#turn').html(xo[who] + '`s turn');
+                }
+            });
+
+            function restart() {
+                gameId = '';
+                state = '';
+                turns = '';
+                who = 0;
+                $('#turn').html('X`s turn');
+                $('#game_result').html('');
+                $('.gamefield').html('<div class="line"><div id="field00"></div> <div id="field01"></div> <div id="field02"></div></div> 	<div class="line"><div id="field10"></div> <div id="field11"></div> <div id="field12"></div></div> <div class="line"><div id="field20"></div> <div id="field21"></div> <div id="field22"></div></div>');
+            }
+
+            $('#restart').click(function () {
+                restart();
+            })
+
+            $('#turn').html('X`s turn');
+
+        });
+    </script>
+</head>
+<body>
+    <div class="center"><button id="restart">New game</button></div>
+    <div class="gamefield">
+        <div class="line">
+            <div id="field00"></div>
+            <div id="field01"></div>
+            <div id="field02"></div>
+        </div>
+        <div class="line">
+            <div id="field10"></div>
+            <div id="field11"></div>
+            <div id="field12"></div>
+        </div>
+        <div class="line">
+            <div id="field20"></div>
+            <div id="field21"></div>
+            <div id="field22"></div>
+        </div>
+    </div>
+    <div class="center" id="turn">X`s turn</div>
+    <div id="game_result"></div>
+</body>
+</html>

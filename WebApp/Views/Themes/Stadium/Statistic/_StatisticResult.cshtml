@@ -1,0 +1,59 @@
+﻿@using WebApp.Models
+@using WebApp.Models.Statistic
+@using WebApp.Models.ViewModels
+@model List<Tuple<object, List<float>>>
+@{
+    StatisticRequest requestModel = ViewBag.RequestModel;
+    List<EventType> eventTypes = ViewBag.EventTypes;
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th colspan="2">Элемент запроса</th>
+            @foreach (var eventType in eventTypes)
+            {
+                <th>@eventType.Name</th>
+            }
+        </tr>
+    </thead>
+    <tbody class="black">
+        @foreach (var item in Model)
+        {
+            var colspan = item.Item2 == null ? "<td colspan=2>" : "<td></td><td>";
+            var color = item.Item2 == null ? "class=success" : item.Item1 is string ? "class=active" : string.Empty;
+            <tr @color>
+                @Html.Raw(colspan)
+                @if (item.Item1 is Player)
+                {
+                    var player = (Player)item.Item1;
+                    @Html.ActionLink(player.Name, "Details", "Player", new { id = player.Id }, null)
+                }
+                else if (item.Item1 is Team)
+                {
+                    var team = (Team)item.Item1;
+                    @Html.ActionLink(team.Name, "Details", "Team", new { id = team.Id }, null)
+                }
+                else if (item.Item1 is GamePreviewViewModel)
+                {
+                    var game = (GamePreviewViewModel)item.Item1;
+                    @Html.ActionLink(game.DisplayName, "Details", "Game", new { id = game.Id }, null)
+                }
+                else if (item.Item1 is Tournament)
+                {
+                    var tourn = (Tournament)item.Item1;
+                    @Html.ActionLink(tourn.Name, "Details", "Tournament", new { id = tourn.Id }, null)
+                }
+                else
+                {
+                    @:@item.Item1.ToString()
+                }
+                @Html.Raw("</td>")
+                @for (int i = 0; i < eventTypes.Count; i++)
+                {
+                    <td>@(item.Item2 == null ? "" : item.Item2[i].ToString())</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

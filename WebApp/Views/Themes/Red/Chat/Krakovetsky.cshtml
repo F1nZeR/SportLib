@@ -1,0 +1,70 @@
+﻿@{Layout = null;}
+<h2>ТУТ КОДИТЬ ЧАТИК. ВЕРХНЮЮ ШТУКУ НЕ ТРОГАТЬ (если удалите - то у вас будут стили от Bootstrap'а и основной каркас)</h2>
+<h3>Требования:</h3>
+<ul>
+    <li>Ну, собственно, рабочее подобие чатика</li>
+    <li>Проверки на то, чтобы нельзя было отправить сообщение, когда хотя бы одно из полей пусто</li>
+    <li>Возможность установки количества сообщений, по сколько мы будем получать с сервера (числовой текстбокс и чтобы туда можно было вводить ТОЛЬКО ЧИСЛА)</li>
+    <li>Возможность смены частоты обновления чата (числовой текстбокс и чтобы туда можно было вводить ТОЛЬКО ЧИСЛА)</li>
+    <li>Всё должно быть выкачено и, впоследствии, закоммичено на <a href="http://chayka.soft-exe.ru:8080/tfs">TFS</a>. Твой логин и пароль: krakovetsky </li>
+
+</ul>
+
+<h3>Запросы:</h3>
+<ul>
+    <li>
+        <div>
+            <b>Получить последние N сообщений (GET):</b> http://chayka.soft-exe.ru/Chat/GetChatMessages?count=N
+        </div>
+        <div>
+            Структура ответа GET:
+            <table border="1">
+                <tr>
+                    <th>Название</th>
+                    <th>Тип</th>
+                </tr>
+                <tr>
+                    <td>Id</td>
+                    <td>int</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>Date (подразумевается тип в JS)</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>string</td>
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td>string</td>
+                </tr>
+            </table>
+        </div>
+        <p>
+            <b>Пример ответа (?count=2):</b> [{"Id":3,"Date":"\/Date(1383739077710)\/","Name":"Kostya","Message":"ASDDAS"},{"Id":2,"Date":"\/Date(1383738350513)\/","Name":"Kostya","Message":"HELLO2"}]
+        </p>
+    </li>
+    <li>
+        <div>
+            <b>Отправить сообщение (POST):</b> http://chayka.soft-exe.ru/Chat/PostMessage
+        </div>
+        <div>
+            Структура запроса POST:
+            <table border="1">
+                <tr>
+                    <th>Название</th>
+                    <th>Тип</th>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>string</td>
+                </tr>
+                <tr>
+                    <td>message</td>
+                    <td>string</td>
+                </tr>
+            </table>
+        </div>
+    </li>
+</ul>

@@ -1,0 +1,19 @@
+﻿@model WebApp.Models.EventType
+
+@{
+    ViewBag.Title = "Добавить вид события";
+}
+
+<h2>Добавить вид события</h2>
+
+@using (Html.BeginForm("Create", "EventType", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+{
+    @Html.ValidationSummary()
+    @Html.EditorForModel()
+    
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Добавить" />
+        </div>
+    </div>
+}

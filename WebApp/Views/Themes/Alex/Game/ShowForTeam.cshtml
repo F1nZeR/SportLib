@@ -1,0 +1,39 @@
+﻿@model IEnumerable<WebApp.Models.Game>
+@using WebApp.Helpers
+
+<table border="1">
+    <tr>
+        <th>
+            Игра
+        </th>
+        <th>
+            Турнир
+        </th>
+        <th>
+            Место
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Date.ToShortDateString(), "Details", "Game", new { id = item.Id }, new { })
+            </td>
+            <td>
+                @if (item.Tournament != null)
+                {
+                    @Html.DisplayFor(modelItem => item.Tournament.Name)
+                }
+                else
+                {
+                    @("-")
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Place)
+            </td>
+        </tr>
+    }
+
+</table>

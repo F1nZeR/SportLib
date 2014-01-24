@@ -1,0 +1,72 @@
+﻿@model WebApp.Models.Player
+
+@{
+    ViewBag.Title = "Игрок " + Model.Name;
+}
+<div class="box">
+    @Model.Sport.Name Игрок @Model.Name
+</div>
+<div class="box">
+    <div class="picture left">
+        <img class="profile-picture" src="@(Model.ImageUrl ?? "/Content/themes/Alex/images/nophoto.jpg")" alt="@Model.Name" />
+    </div>
+    <div class="inline">
+        <div>
+            <div class="inline left">
+                @Html.LabelFor(x => x.Name)
+            </div>
+            <div class="inline">
+                @Model.Name
+            </div>
+
+        </div>
+        <div>
+            <div class="inline left">
+                @Html.LabelFor(x => x.BirthDate)
+            </div>
+            <div class="inline">
+                @Model.BirthDate.ToShortDateString()
+            </div>
+        </div>
+        <div>
+            <div class="inline left">
+                @Html.LabelFor(x => x.Sex)
+            </div>
+            <div class="inline">
+                @Model.Sex
+            </div>
+        </div>
+        <div>
+            <div class="inline left">
+                @Html.LabelFor(x => x.Nationality)
+            </div>
+            <div class="inline">
+                @Model.Nationality
+            </div>
+        </div>
+        @for (int i = 0; i < Model.Properties.Count; i++)
+        {
+            <div>
+                <div class="inline left">
+                    <label>@Model.Properties[i].PlayerPropertyType.Name</label>
+                </div>
+                <div class="inline">
+                    @Model.Properties[i].Value
+                </div>
+            </div>
+        }
+    </div>
+    <div class="blog">
+        <h4>@Html.LabelFor(x => x.Biography)</h4>
+        @Model.Biography
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id })        
+    }
+    <div class="box">
+        <div class="match">
+            @Html.Action("ShowForPlayer", "Game", new { id = Model.Id })
+        </div>
+    </div>
+</div>

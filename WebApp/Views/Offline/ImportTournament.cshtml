@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Импорт турнира";
+}
+
+<h2>Загрузка одного файла</h2>
+<div>
+    @using (Html.BeginForm("ImportTournament", "Offline", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+    {
+        <input type="file" name="fileUpload" /><br />
+        <input type="submit" name="Submit" id="SubmitSingle" value="Загрузить" />
+    }
+</div>

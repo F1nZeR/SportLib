@@ -1,0 +1,112 @@
+﻿@using WebApp.Models
+@{
+    ViewBag.Title = "Статистика";
+    List<Sport> sports = ViewBag.SportList;
+}
+
+<h1>Статистика</h1>
+<div id="statistic" class="well-lg">
+    @using (Ajax.BeginForm("GetStatistic", "Statistic",
+        new AjaxOptions { HttpMethod = "Post", OnBegin = "startLoading", OnSuccess = "stopLoading", InsertionMode = InsertionMode.Replace, UpdateTargetId = "statisticResult" }))
+    {
+        <div>
+            Выберите вид спорта:
+            @foreach (var sport in sports)
+            {
+                @Ajax.ActionLink(sport.Name, "GetStatTarget", "Statistic", new { sportId = sport.Id },
+                    new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "statTarget", InsertionMode = InsertionMode.Replace, OnBegin = "startLoading", OnComplete = "loadSelect2", OnSuccess = "stopLoading" },
+                    new { @class = "btn btn-sm btn-default" })
+                @(" ")
+            }
+        </div>
+    <div id="statTarget">
+    </div>
+    }
+</div>
+
+<div id="statisticResult">
+</div>
+
+@section scripts {
+    <script src="~/Scripts/spin.min.js"></script>
+    <script src="~/Scripts/select2.js"></script>
+    <script>
+        initHrefs();
+        var target = document.getElementById("statistic");
+        var spinner = new Spinner({
+            length: 15,
+            width: 7,
+            radius: 20
+        });
+
+        function initHrefs() {
+            var links = $("#statistic").find("a");
+            links.each(function() {
+                $(this).click(function () {
+                    var siblings = $(this).siblings(".btn-info");
+                    siblings.removeClass("btn-info");
+                    siblings.addClass("btn-default");
+                    $(this).removeClass("btn-default");
+                    $(this).addClass("btn-info");
+                });
+            });
+        }
+
+        function startLoading() {
+            spinner.spin(target);
+        }
+
+        function stopLoading() {
+            spinner.stop();
+        }
+
+        function loadSelect2() {
+            var targetEvents = $("#TargetEvents");
+            targetEvents.select2({ dropdownAutoWidth: true });
+
+            var agregate = $("#AgregateType");
+            agregate.select2({ dropdownAutoWidth: true });
+
+            var sortEvent = $("#SortEvent");
+            sortEvent.select2({ dropdownAutoWidth: true });
+
+            var sortOrder = $("#SortOrder");
+            sortOrder.select2({ dropdownAutoWidth: true });
+
+            var statElems = $("#StatElements");
+            statElems.select2({ dropdownAutoWidth: true });
+            statElems.on("change", function() {
+                getContextEditor($("#ContextType").val());
+            });
+            $("#statTargetEditor").find("a").each(function() {
+                $(this).click(function (event) {
+                    event.preventDefault();
+                    var contextType = $(this).attr("data-context");
+                    getContextEditor(contextType);
+                });
+            });
+
+            initHrefs();
+        }
+
+        function getContextEditor(contextType) {
+            if (!contextType) return;
+            var sportId = $("#SportId").val();
+            var statTargetType = $("#StatType").val();
+            var statElements = $("#StatElements").val();
+            if (!statElements) {
+                alert("Выберите целевые элементы!");
+                return;
+            } else {
+                statElements = statElements.toString();
+            }
+            startLoading();
+            $.get("@Url.Action("GetContextEditor")", { sportId: sportId, targetType: statTargetType, elements: statElements, contextType: contextType }, function(data) {
+                $("#contextEditor").html(data);
+                $("#ContextElems").val(null);
+                $("#ContextElems").select2({ dropdownAutoWidth: true });
+                stopLoading();
+            });
+        }
+    </script>
+}

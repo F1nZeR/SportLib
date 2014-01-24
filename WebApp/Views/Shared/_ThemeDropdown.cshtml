@@ -1,0 +1,15 @@
+﻿@using WebApp.Helpers
+@{ var list = ThemeHelper.GetSelectedList(ViewContext.RequestContext.HttpContext.Items["themeName"].ToString());
+}
+@Html.DropDownList("Theme", list)
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#Theme').change(function () {
+
+            $.post('@Url.Action("Index", "Theming")', { theme: $(this).val() }, function (result) {
+                location.reload();
+            });
+        });
+    });
+</script>

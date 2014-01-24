@@ -1,0 +1,10 @@
+﻿@model WebApp.Models.ViewModels.EventViewModel
+
+@if (!string.IsNullOrEmpty(Model.Time))
+{
+    <pre data-id="@Model.Id"><span class="label label-primary">@Model.Time</span> <b>@Model.EventText: @Html.ActionLink(Model.Player.Item2, "Details", "GameParticipant", new{id = Model.Player.Item1}, null).</b> <i>@Model.Comment</i></pre>
+}
+else
+{
+    <pre data-id="@Model.Id"><b>@Model.EventText.</b> <i>@Model.Comment</i></pre>
+}

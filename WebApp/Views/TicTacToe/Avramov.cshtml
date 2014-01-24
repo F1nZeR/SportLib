@@ -1,0 +1,222 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Крестики-нолики Аврамова</title>
+    @Scripts.Render("~/bundles/jquery")
+    <style type="text/css">
+        #title {
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            background-color: #555;
+            padding: 10px;
+            color: #fff;
+            font-size: 24px;
+        }
+
+        #short_message {
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        #messages {
+            width: 550px;
+            margin: 20px auto;
+            padding: 10px;
+            height: 350px;
+            overflow: auto;
+            border-radius: 4px;
+            word-wrap: break-word;
+            border: 2px solid #CCCCCC;
+        }
+
+        .message {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #F4F4F4;
+        }
+
+        .gamer {
+            display: inline;
+            color: #0f0f0f;
+            padding: 3px;
+            border-radius: 4px;
+            background: #AAAAAA;
+        }
+
+        .setochka {
+            overflow: hidden;
+            width: 300px;
+            margin: 20px auto;
+            padding: 10px;
+            height: 300px;
+            border-radius: 8px;
+            border: 2px solid #CCCCCC;
+            background-color: #555;
+        }
+
+        .newline {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+            .newline div {
+                display: inline-block;
+                overflow: hidden;
+                width: 93px;
+                height: 93px;
+                border-radius: 4px;
+                border: 2px solid #CCCCCC;
+                background-color: #ffffff;
+            }
+
+        .x {
+            background-image: url(/Content/Avramov/X.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none !important;
+        }
+
+        .o {
+            background-image: url(/Content/Avramov/0.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none !important;
+        }
+
+        .center {
+            text-align: center;
+            padding: 10px;
+        }
+
+        #result-x, #result-o {
+            display: inline;
+            padding: 5px;
+            border-radius: 4px;
+            border: 2px solid #CCCCCC;
+            background-color: #999;
+        }
+
+        #new-game {
+            width: 300px;
+            margin: 0px auto;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+    <script>
+        jQuery(document).ready(function () {
+            var xoro_literal = ["x", "o"];
+            var results = [0, 0, 0];//результат 1 игрока, 2 игрока и метка о том, что счет за текущую игру был изменен
+            var gameId = '';
+            var state = '';
+            var turns = '';
+            var xoro = 0;//0 для X и 1 для O
+            $('#step').html('Игрок 1, Ваш ход!');
+
+            function new_game() {
+                $('.setochka').html('<div class="newline"><div id="block00"></div> <div id="block01"></div> <div id="block02"></div></div> 	<div class="newline"><div id="block10"></div> <div id="block11"></div> <div id="block12"></div></div> <div class="newline"><div id="block20"></div> <div id="block21"></div> <div id="block22"></div></div>');
+                gameId = '';
+                state = '';
+                turns = '';
+                xoro = 0;
+                results[2] = 0;
+                $('#step').html('Игрок 1, Ваш ход!');
+                $('#short_message').html('');
+            }
+
+            $('#new-game').click(function () {
+                new_game();
+            })
+
+            function log(Turns) {
+                $('#messages').html('');
+                $('#messages').append(state + '<br />');
+                $.each(Turns, function (index, itemData) {
+                    var messaga = '<div class="message" id="message-' + itemData.Id + '"><div class="gamer"> Игрок ' + (itemData.Value + 1) + '</div><div class="textmsg"> сделал ход "' + xoro_literal[itemData.Value] + '" в клетку (' + (itemData.X + 1) + ',' + (itemData.Y + 1) + ')</div></div>';
+                    $('#messages').append(messaga);
+                });
+                var element = document.getElementById('messages');
+                element.scrollTop = element.scrollHeight;
+            }
+
+            $('.setochka').click(function (event) {
+                var clickId = event.target.id;
+                var x = clickId[5]; //Мне было лень нормально парсить координаты;)
+                var y = clickId[6];
+                if ((typeof x != "undefined") && (typeof y != "undefined") && (results[2] == 0)) {
+                    $('#block' + x + y).append('<div class="' + xoro_literal[xoro] + '"></div>');
+                    $.post("/TicTacToe/MakeTurn", { gameId: gameId, value: xoro, x: x, y: y }).done(function (data) {
+                        if (gameId == '') gameId = data;
+                        $.getJSON("/TicTacToe/GetState?gameId=" + gameId, function (json) {
+                            state = json.State;
+                            log(json.Turns);
+
+                            switch (state) {
+                                case 'X':
+                                    $('#short_message').html("В этом славном бою победу одержал Игрок 1(X)!");
+                                    results[0]++;
+                                    results[2] = 1;
+                                    $('#result-x').html(results[0]);
+                                    $('#step').html('');
+                                    break
+                                case 'O':
+                                    $('#short_message').html("В этом славном бою победу одержал Игрок 2(O)!");
+                                    results[1]++;
+                                    results[2] = 1;
+                                    $('#result-o').html(results[1]);
+                                    $('#step').html('');
+                                    break
+                                case 'Draw':
+                                    $('#short_message').html("Ничья!");
+                                    $('#step').html('Игра окончена!');
+                                    break
+                            }
+                        });
+                    });
+                    //меняем х на 0 или наиборот
+                    (xoro) ? xoro = 0 : xoro = 1;
+                    $('#step').html('Игрок ' + (xoro + 1) + ', Ваш ход!');
+                } else if (results[2] != 0) {
+                    $('#step').html('Игра окончена! Начните новую игру:)');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="title">Крестики-нолики</div>
+    <div class="center">СЧЁТ</div>
+    <div class="center">Игрок 1 <div id="result-x">0</div> - <div id="result-o">0</div> Игрок 2</div>
+    <div class="center" id="step"></div>
+    <div class="setochka">
+        <div class="newline">
+            <div id="block00"></div>
+            <div id="block01"></div>
+            <div id="block02"></div>
+        </div>
+        <div class="newline">
+            <div id="block10"></div>
+            <div id="block11"></div>
+            <div id="block12"></div>
+        </div>
+        <div class="newline">
+            <div id="block20"></div>
+            <div id="block21"></div>
+            <div id="block22"></div>
+        </div>
+    </div>
+    <div id="short_message"></div>
+    <div class="center"><button id="new-game">Начать новую игру</button></div>
+    <div id="messages"></div>
+</body>
+</html>
+

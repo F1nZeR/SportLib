@@ -1,0 +1,29 @@
+﻿@using WebApp.Helpers
+@model List<WebApp.Models.Tournament>
+
+@{
+    ViewBag.Title = "Список турниров";
+}
+
+<h2>Список турниров для вида спорта "@ViewBag.Sport.Name"</h2>
+
+
+<div class="picture-container">
+    @foreach (var item in Model)
+    {
+        <div class="picture">
+            <a href="@Url.Action("Details", "Tournament", new { id = item.Id })">
+                <img src="@(item.ImageUrl ?? "/Content/themes/Alex/images/ft.jpg")" />
+            </a>
+            <div class="center">
+                @item.Name
+            </div>
+        </div>
+
+    }
+
+</div>
+@if (User.IsInRole("Admin"))
+{
+    @Html.ActionLink("Создать турнир", "Create", "Tournament", null, new { @class = "btn btn-primary" })
+}

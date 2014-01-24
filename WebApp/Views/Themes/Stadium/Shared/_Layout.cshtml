@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>@ViewBag.Title - Чайка-СОФТ</title>
+    @Styles.Render("~/Content/Default")
+    @Styles.Render("~/Content/themes/Stadium/css/style.css")
+    @Styles.Render("~/Content/themes/Stadium/css/style2.css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/jquery.dropdownPlain.js")
+</head>
+<body>
+
+    <div id="container">
+        <div id="header">
+
+        </div>
+
+        @Html.Action("Navigation", "Home", new { })
+
+        <div id="content">
+            @RenderBody()
+        </div>
+
+        <div id="clear">
+
+        </div>
+
+
+    </div>
+    <div id="footer">
+        <div style="margin-left: 10px; text-align:left; float:left; width: 32%;">
+            <p>@Html.ActionLink("Главная", "Index", "Home")
+            </p>
+            <p>@Html.ActionLink("Турниры", "Index", "Tournament")
+            </p>
+            <p>@Html.ActionLink("Команды", "Index", "Team")
+            </p>
+            <p>@Html.ActionLink("Статистика", "Index", "Statistic")
+            </p>
+            <p>@Html.ActionLink("О сайте", "About", "Home")
+            </p>
+        </div>
+        <div style="color: #eeeeee; text-align: center;  width:33%; float: left">
+            <h2>
+                Chayka-Sport - читай матчи любимых команд!
+            </h2>
+            <div id="soc">
+                <div>@Html.Action("Index", "ThemeSwitcher")</div>
+                <div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a>
+                        }
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Войти", "Login", "Account", new { }, new { })
+                    }
+                </div>
+            </div>
+        </div>
+        @*<div id="soc" style="color: #eeeeee; text-align: right; width: 33%; float: left">
+            <h3>
+                Мы в соцсетях:
+            </h3>
+                <div>
+                    <img style="width:12%" src='image/soc/vk.png' /></img>
+                    <img style="width:12%" src="image/soc/tw.png" />
+                </div>
+                <div>
+                    <img style="width:12%" src='image/soc/fb.png' /></img>
+                    <img style="width:12%" src="image/soc/instagram.png" />
+                </div>
+                <div>
+                    <img style="width:12%" src="image/soc/odnokl-logo.png" />
+                    <img style="width:12%" src="image/soc/g+.png" />
+                </div>
+
+            
+
+        </div>*@
+    </div>
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jqueryval")
+@RenderSection("scripts", required: false)
+</body>
+</html>

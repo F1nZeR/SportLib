@@ -1,0 +1,44 @@
+﻿@using WebApp.Helpers
+@using WebApp.Models
+@using WebApp.Models.Statistic
+@model List<WebApp.Models.Statistic.StatTarget>
+@{
+    List<EventType> eventTypes = ViewBag.EventTypes;
+    var eventDropDown = new SelectList(eventTypes, "Id", "Name");
+
+    var desc = new SelectListItem {Text = "По убыванию", Value = "0"};
+    var asc = new SelectListItem {Text = "По возрастанию", Value = "1"};
+    var sortOrder = new List<SelectListItem> {desc, asc};
+
+    var enums = from StatAgregateType d in Enum.GetValues(typeof(StatAgregateType)) select new { Id = (int)d, Name = d.Description() };
+    var agregate = new SelectList(enums, "Id", "Name");
+}
+
+@Html.Hidden("SportId", (int)ViewBag.SportId)
+<p>
+    Целевые события: @Html.DropDownList("TargetEvents", eventDropDown, new Dictionary<string, object>
+                     {
+                         { "data-placeholder", "Типы событий"},
+                         { "multiple", ""}
+                     })
+</p>
+<p>
+    Сортировка: @Html.DropDownList("SortEvent", eventDropDown) @Html.DropDownList("SortOrder", sortOrder)
+</p>
+<p>
+    Агрегирующая функция: @Html.DropDownList("AgregateType", agregate)
+</p>
+
+<p>
+    Целевой элемент статистики:
+    @foreach (var stat in Model)
+    {
+        @Ajax.ActionLink(stat.StatTargetType.Description(), "GetStatTargetEditor", "Statistic", new { sportId = stat.SportId, type = stat.StatTargetType },
+                        new AjaxOptions { HttpMethod = "Get", InsertionMode = InsertionMode.Replace, UpdateTargetId = "statTargetEditor", OnBegin = "startLoading", OnComplete = "loadSelect2", OnSuccess = "stopLoading" },
+                new { @class = "btn btn-sm btn-default" })
+        @(" ")
+    }
+</p>
+
+<div id="statTargetEditor">
+</div>

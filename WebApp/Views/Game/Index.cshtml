@@ -1,0 +1,34 @@
+﻿@model List<WebApp.Models.ViewModels.GamePreviewViewModel>
+
+@{
+    ViewBag.Title = "Игры";
+}
+
+<h2>Игры</h2>
+
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Участники</th>
+            <th>Дата</th>
+            <th>Счёт</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td><a class="btn btn-sm" href="@Url.Action("Details", new{id = game.Id})">@Html.Raw(game.RawDisplayName)</a></td>
+                <td>@game.DateString</td>
+                <td>@game.GameResultString</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        @Html.ActionLink("Добавить игру", "Create", "Game", new { sportId = ViewBag.SportId, tournId = ViewBag.TournamentId }, new { @class = "btn btn-primary" }) @(" ")
+    }
+    @Html.ActionLink("К турнирам", "Index", "Tournament", new{sportId = ViewBag.SportId}, new{@class = "btn btn-default"})
+</div>

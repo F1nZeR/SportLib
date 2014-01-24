@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>@ViewBag.Title - Чайка-СОФТ</title>
+    @Styles.Render("~/Content/Default")
+    @Styles.Render("~/Content/themes/Alex/css/slideshow.css")
+    @Styles.Render("~/Content/themes/Alex/css/stylesheet.css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body>
+    <div class="row-1">
+        <div id="header">
+            <div id="bgtop">
+                
+                <ul class="links">
+                    <li>@Html.ActionLink("Главная", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Турниры", "Index", "Tournament")</li>
+                    <li>@Html.ActionLink("Команды", "Index", "Team")</li>
+                    <li>@Html.ActionLink("Статистика", "Index", "Statistic")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="wrap-4">
+        <div class="wrap-1">
+            <div class="bg-top-content"></div>
+            <div class="tail-content">
+                <div id="container">
+                    <div class="wrap-content">
+                        <div id="column-left">
+                            <div class="box cat-colum">
+                                <div class="box-content">
+                                    <div class="box-category">
+                                       @Html.Action("Navigation", "Home", new { })
+                                    </div>
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                $(document).ready(function () {
+                                    $(".act-cat").toggle(
+                                             function () {
+                                                 $(this).next('.level-2-cat').slideToggle("slow"), {
+                                                     duration: 'slow',
+                                                     easing: 'easeOutBounce'
+                                                 };
+                                             },
+                                             function () {
+                                                 $(this).next('.level-2-cat').slideToggle("slow"), {
+                                                     duration: 'slow',
+                                                     easing: 'easeOutBounce'
+                                                 };
+                                             }
+                                         );
+
+                                });
+                            </script>
+                        </div>
+
+                        <div id="content">
+
+                            @RenderBody()
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrap-3">
+        <div class="footer-wrap">
+            <div class="footer-wrap-top"></div>
+            <div id="footer">
+                <div class="column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li>@Html.ActionLink("Главная", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Турниры", "Index", "Tournament")</li>
+                        <li>@Html.ActionLink("Команды", "Index", "Team")</li>
+                        <li>@Html.ActionLink("Статистика", "Index", "Statistic")</li>
+                    </ul>
+                </div>
+                <div id="copyright">&copy; Чайка-Софт, 2013<br />Условия использования</div>
+                <div>@Html.Action("Index", "ThemeSwitcher")</div>
+                <div>
+                    @if(User.IsInRole("Admin"))
+                    {
+                       using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm"}))
+                        {
+                            @Html.AntiForgeryToken()
+                           <a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a>
+                        } 
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Войти","Login","Account", new{}, new{})  
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jqueryval")
+@RenderSection("scripts", required: false)
+</body>
+</html>

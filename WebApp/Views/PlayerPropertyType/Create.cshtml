@@ -1,0 +1,19 @@
+﻿@model WebApp.Models.PlayerPropertyType
+
+@{
+    ViewBag.Title = "Создание типа атрибута игрока";
+}
+
+<h2>Создание типа атрибута игрока</h2>
+
+@using (Html.BeginForm("Create", "PlayerPropertyType", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.ValidationSummary()
+    @Html.EditorForModel()
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Добавить" />
+        </div>
+    </div>
+}

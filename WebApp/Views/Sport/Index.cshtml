@@ -1,0 +1,21 @@
+﻿@model List<WebApp.Models.Sport>
+
+@{
+    ViewBag.Title = "Виды спорта";
+}
+
+<h2>Виды спорта</h2>
+@if (Model.Any())
+{
+    <ul>
+        @foreach (var sport in Model)
+        {
+            <li>@Html.ActionLink(sport.Name, "Details", "Sport", new{id = sport.Id}, null)</li>
+        }
+    </ul>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    @Html.ActionLink("Создать новый", "Create", "Sport", null, new{@class = "btn btn-primary"})
+}

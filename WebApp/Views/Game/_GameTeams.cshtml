@@ -1,0 +1,43 @@
+﻿@model List<WebApp.Models.ViewModels.GameTeamViewModel>
+@{
+    var size = 12/(Model.Count == 0 ? 1 : Model.Count);
+}
+
+<div class="row">
+    <div class="panel-group" id="accordion">
+        @foreach (var team in Model)
+        {
+            <div class="col-xs-@(size)">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse@(team.Id)">
+                                @if (!string.IsNullOrEmpty(team.ImageUrl))
+                                {
+                                    @:<img src="@team.ImageUrl" width="30" height="30" /> 
+                                }
+                                @team.Name
+                            </a>
+                            @if (ViewBag.Editable == true && User.IsInRole("Admin"))
+                            {
+                                @Ajax.ActionLink("Удалить", "DeleteParticipant", "Game", new { id = team.Id },
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                UpdateTargetId = "gameParticip",
+                                InsertionMode = InsertionMode.Replace
+                            },
+                            new { @class = "btn btn-danger btn-xs" })
+                            }
+                        </h4>
+                    </div>
+                    <div id="collapse@(team.Id)" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            @Html.Partial("_GamePlayers", team.GamePlayerViewModels)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

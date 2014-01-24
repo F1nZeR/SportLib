@@ -1,0 +1,21 @@
+﻿@model WebApp.Models.EventType
+
+@Html.HiddenFor(x => x.SportId)
+<div class="form-group">
+    @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.IsSignifForProtocol, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.IsSignifForProtocol, new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.TotalChange, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.TotalChange, new { @class = "form-control" })
+    </div>
+</div>

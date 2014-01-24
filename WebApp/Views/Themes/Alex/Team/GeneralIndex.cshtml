@@ -1,0 +1,23 @@
+﻿@model List<WebApp.Models.Sport>
+@{
+    ViewBag.Title = "Команды/Игроки";
+}
+<h2>Список команд/игроков по видам спорта</h2>
+<div class="box">
+    <ul>
+        @foreach(var item in Model)
+    {
+        <li>
+            @if(item.IsTeamSport)
+            {
+                @Html.ActionLink(item.Name,"Index","Team", new{ sportId = item.Id }, new{})
+            }
+            else
+            {
+                @Html.ActionLink(item.Name,"Index","Player", new{ sportId = item.Id }, new{})
+            }
+        </li>
+    }
+    </ul>
+</div>
+

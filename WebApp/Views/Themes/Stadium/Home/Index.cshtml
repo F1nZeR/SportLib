@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "Главная";
+}
+<div id="main">
+
+
+    <div id="contable">
+       @Html.Action("Filters", "Sport", new { })
+       @if(ViewBag.Sport != null)
+       {
+            @Html.Action("ShowForSport", "Game", new {id = ViewBag.Sport.Id })
+       }
+       else
+       {
+        <div>Выберите спорт</div>
+       }       
+    </div>
+</div>

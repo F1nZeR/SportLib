@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WebApp.Models.Player>
+@using WebApp.Helpers
+
+<table class="stat-table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            Возраст
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sex)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nationality)
+        </th>
+        @if (User.IsInRole("Admin"))
+        {
+                <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "Details", "Player", new { id = item.Id }, new { })
+            </td>
+            <td>
+                @(DateTime.Now.Year - item.BirthDate.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sex)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nationality)
+            </td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.PostActionButton("×", "Delete", "Player", new { id = item.Id }, new { @class = "delete-button" })
+                </td>
+            }
+        </tr>
+    }
+
+</table>

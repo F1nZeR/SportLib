@@ -1,0 +1,14 @@
+﻿@model List<WebApp.Models.Player>
+
+<ul>
+    @foreach (var partic in Model)
+    {
+        <li>
+            @Html.ActionLink(partic.Name, "Details", "Team", new { id = partic.Id }, null)
+            @Ajax.ActionLink("Добавить", "AddParticipantToTournament", "Tournament",
+                new { tournId = ViewBag.TournamentId, particId = partic.Id },
+                 new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tournParticips", InsertionMode = InsertionMode.Replace },
+                  new { @class = "btn btn-success btn-xs" })
+        </li>
+    }
+</ul>

@@ -1,0 +1,11 @@
+﻿@using WebApp.Helpers
+@using WebApp.Models.Statistic
+@model SelectList
+@{
+    StatTargetType contextType = ViewBag.ContextType;
+}
+
+@Html.Hidden("ContextType", contextType)
+Элементы контекста: @Html.DropDownList("ContextElems", Model, new{ multiple = true, placeholder = contextType.Description()})
+
+<p class="text-center"><input class="btn btn-primary" type="submit" value="Получить статистику"/></p>

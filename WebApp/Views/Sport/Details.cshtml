@@ -1,0 +1,153 @@
+﻿@using WebApp.Helpers
+@using WebApp.Models
+@model WebApp.Models.ViewModels.SportTotalEditViewModel
+
+@{
+    ViewBag.Title = Model.Sport.Name;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<ul class="nav nav-tabs">
+    <li><a href="#sportAttrs" data-toggle="tab">Атрибуты вида спорта</a></li>
+    <li><a href="#playerAttrs" data-toggle="tab">Атрибуты игрока</a></li>
+    <li><a href="#teamAttrs" data-toggle="tab">Атрибуты команды</a></li>
+    <li><a href="#eventAttrs" data-toggle="tab">События</a></li>
+</ul>
+
+
+<div class="tab-content">
+    <div class="tab-pane active" id="sportAttrs">
+        <form class="form-horizontal">
+            <div class="row">
+                <div class="col-md-6">@Html.DisplayFor(x => x.Sport)</div>
+                <div class="col-md-6"><img src="@Model.Sport.ImageUrl" class="img-responsive" /></div>
+            </div>
+        </form>
+        <div class="small well">
+            <ul class="list-group">
+                @if (!Model.Sport.IsTeamSport)
+                {
+                    <li class=" list-group-item"><span class="badge">@Html.Action("Count", "Player", new { sportid = Model.Sport.Id })</span>@Html.ActionLink("Список игроков", "Index", "Player", new { sportid = Model.Sport.Id }, new { })</li>
+                }
+                else
+                {
+                    <li class="list-group-item"><span class="badge">@Html.Action("Count", "Team", new { sportid = Model.Sport.Id })</span>@Html.ActionLink("Список команд", "Index", "Team", new { sportid = Model.Sport.Id }, new { })</li>
+                }
+            </ul>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div>
+                @Html.ActionLink("Редактировать вид спорта", "Edit", "Sport", new { id = Model.Sport.Id }, new { @class = "btn btn-primary" })
+                @Html.PostActionButton("Удалить вид спорта", "Delete", "Sport", new { id = Model.Sport.Id }, new { @class = "btn btn-danger" })
+                @if (!Model.Sport.IsTeamSport)
+                {
+                    @Html.ActionLink("Добавить игрока", "Create", "Player", new { sportid = Model.Sport.Id }, new { @class = "btn btn-primary" })
+                }
+                else
+                {
+                    @Html.ActionLink("Добавить команду", "Create", "Team", new { sportid = Model.Sport.Id }, new { @class = "btn btn-primary" })
+                }
+            </div>
+        }
+    </div>
+    <div class="tab-pane" id="playerAttrs">
+        <table class="table">
+            @{var ppType = Model.PlayerPropertyTypes.Any() ? Model.PlayerPropertyTypes.First() : new PlayerPropertyType();}
+            <tr>
+                <th>@Html.LabelFor(x => ppType.Name)</th>
+                <th>@Html.LabelFor(x => ppType.Type)</th>
+                <th>@Html.LabelFor(x => ppType.IsDependsOnGame)</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Действия</th>
+                }
+            </tr>
+            @foreach (var curPpType in Model.PlayerPropertyTypes)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(x => curPpType.Name)</td>
+                    <td>@Html.DisplayFor(x => curPpType.Type)</td>
+                    <td>@Html.DisplayFor(x => curPpType.IsDependsOnGame)</td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            @Html.ActionLink("Редактировать", "Edit", "PlayerPropertyType", new { id = curPpType.Id }, null) |
+                            @Html.ActionLink("Удалить", "Delete", "PlayerPropertyType", new { id = curPpType.Id }, null)
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Добавить тип атрибута игрока", "Create", "PlayerPropertyType", new { sportId = Model.Sport.Id }, new { @class = "btn btn-primary" })
+        }
+    </div>
+    <div class="tab-pane" id="teamAttrs">
+        <table class="table">
+            @{var tpType = Model.TeamPropertyTypes.Any() ? Model.TeamPropertyTypes.First() : new TeamPropertyType();}
+            <tr>
+                <th>@Html.LabelFor(x => tpType.Name)</th>
+                <th>@Html.LabelFor(x => tpType.Type)</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Действия</th>
+                }
+            </tr>
+            @foreach (var curTpType in Model.TeamPropertyTypes)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(x => curTpType.Name)</td>
+                    <td>@Html.DisplayFor(x => curTpType.Type)</td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            @Html.ActionLink("Редактировать", "Edit", "TeamPropertyType", new { id = curTpType.Id }, null) |
+                            @Html.ActionLink("Удалить", "Delete", "TeamPropertyType", new { id = curTpType.Id }, null)
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Добавить тип атрибута команды", "Create", "TeamPropertyType", new { sportId = Model.Sport.Id }, new { @class = "btn btn-primary" })
+        }
+    </div>
+    <div class="tab-pane" id="eventAttrs">
+        <table class="table">
+            @{var eType = Model.EventTypes.Any() ? Model.EventTypes.First() : new EventType();}
+            <tr>
+                <th>@Html.LabelFor(x => eType.Name)</th>
+                <th>@Html.LabelFor(x => eType.IsSignifForProtocol)</th>
+                <th>@Html.LabelFor(x => eType.TotalChange)</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Действия</th>
+                }
+            </tr>
+            @foreach (var curEvType in Model.EventTypes)
+            {
+                var eventTypes = (List<EventType>)ViewBag.EventTypes;
+                <tr>
+                    <td>@Html.DisplayFor(x => curEvType.Name)</td>
+                    <td>@Html.DisplayFor(x => curEvType.IsSignifForProtocol)</td>
+                    <td>@Html.DisplayFor(x => curEvType.TotalChange)</td>
+                    @if (User.IsInRole("Admin") && !curEvType.IsSystemEventType)
+                    {
+                        <td>
+                            @Html.ActionLink("Редактировать", "Edit", "EventType", new { id = curEvType.Id }, new { @class = "btn btn-sm btn-default" }) |
+                            @Html.PostActionButton("Удалить", "Delete", "EventType", new { id = curEvType.Id }, new { @class = "btn btn-sm btn-danger" })
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Добавить вид события", "Create", "EventType", new { sportId = Model.Sport.Id }, new { @class = "btn btn-primary" })
+        }
+    </div>
+</div>

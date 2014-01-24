@@ -1,0 +1,15 @@
+﻿@model List<WebApp.Models.ViewModels.GamePreviewViewModel>
+
+@{
+    ViewBag.Title = "Игры";
+}
+
+<h2>Игры</h2>
+
+
+<ul>
+    @foreach (var game in Model)
+    {
+        <li>@Html.ActionLink(game.DisplayName, "Details", new { id = game.Id })</li>
+    }
+</ul>

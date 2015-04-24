@@ -1,4 +1,4 @@
 SportLib
 ========
 
-![Class diagram](https://raw2.github.com/F1nZeR/SportLib/master/class_diagram.jpg "Class diagram")
+![Class diagram](https://github.com/F1nZeR/SportLib/blob/master/class_diagram.jpg?raw=true "Class diagram")
